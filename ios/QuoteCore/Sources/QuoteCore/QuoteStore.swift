@@ -9,12 +9,15 @@ public enum WidgetTheme: String, CaseIterable, Identifiable, Sendable {
 /// Settings and state shared between the app and the widget through the App Group.
 public final class QuoteStore {
     public static let appGroup = "group.io.github.nikhila612.quotewidget"
+    public static let maxCustomLength = 160
+    public static let defaultCustomAuthor = "Me"
 
     private enum Key {
         static let seed = "seed"
         static let installDay = "installDay"
         static let favourites = "favourites"
         static let theme = "theme"
+        static let customQuotes = "customQuotes"
     }
 
     private let defaults: UserDefaults
@@ -41,9 +44,13 @@ public final class QuoteStore {
     }
 
     public func quote(for date: Date = .now) -> Quote {
-        let index = QuotePicker.quoteIndex(
-            dayIndex: dayIndex(for: date), count: quotes.count, seed: seed)
-        return quotes[index]
+        let custom = customQuotes
+        let pick = QuotePicker.dailyPick(
+            dayIndex: dayIndex(for: date), libraryCount: quotes.count, customCount: custom.count, seed: seed)
+        switch pick {
+        case .library(let index): return quotes[index]
+        case .custom(let index): return custom[index]
+        }
     }
 
     /// Today's quote first, then earlier days, never before the install day.
@@ -56,6 +63,48 @@ public final class QuoteStore {
         }
     }
 
+    // MARK: The user's own quotes
+
+    public var customQuotes: [Quote] {
+        guard let data = defaults.data(forKey: Key.customQuotes),
+              let saved = try? JSONDecoder().decode([Quote].self, from: data)
+        else { return [] }
+        return saved
+    }
+
+    /// Adds a new quote, or updates the one with `id`. Returns nil when the text is empty.
+    @discardableResult
+    public func saveCustomQuote(text: String, author: String, id: String? = nil) -> Quote? {
+        let cleanText = String(text.trimmingCharacters(in: .whitespacesAndNewlines).prefix(Self.maxCustomLength))
+        guard !cleanText.isEmpty else { return nil }
+        let cleanAuthor = author.trimmingCharacters(in: .whitespacesAndNewlines)
+        let quote = Quote(
+            id: id ?? "u-\(UUID().uuidString)",
+            text: cleanText,
+            author: cleanAuthor.isEmpty ? Self.defaultCustomAuthor : cleanAuthor,
+            tags: ["mine"])
+
+        var all = customQuotes
+        if let existing = all.firstIndex(where: { $0.id == quote.id }) {
+            all[existing] = quote
+        } else {
+            all.append(quote)
+        }
+        writeCustomQuotes(all)
+        return quote
+    }
+
+    public func deleteCustomQuote(id: String) {
+        writeCustomQuotes(customQuotes.filter { $0.id != id })
+        var ids = favouriteIDs
+        ids.remove(id)
+        defaults.set(Array(ids).sorted(), forKey: Key.favourites)
+    }
+
+    private func writeCustomQuotes(_ quotes: [Quote]) {
+        defaults.set(try? JSONEncoder().encode(quotes), forKey: Key.customQuotes)
+    }
+
     // MARK: Favourites
 
     public var favouriteIDs: Set<String> {
@@ -64,7 +113,7 @@ public final class QuoteStore {
 
     public var favourites: [Quote] {
         let ids = favouriteIDs
-        return quotes.filter { ids.contains($0.id) }
+        return (customQuotes + quotes).filter { ids.contains($0.id) }
     }
 
     public func isFavourite(_ quote: Quote) -> Bool { favouriteIDs.contains(quote.id) }

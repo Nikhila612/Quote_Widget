@@ -28,6 +28,18 @@ class QuotePickerTest {
         assertEquals(4, QuotePicker.quoteIndex(10, 10, 42uL))
     }
 
+    // Shared vectors: iOS testDailyPickMatchesSharedVectors asserts the same values.
+    @Test
+    fun dailyPickMatchesSharedVectors() {
+        fun pick(day: Long, custom: Int = 3) = QuotePicker.dailyPick(day, 10, custom, 42uL)
+        assertEquals(DailyPick.Library(4), pick(5))
+        assertEquals(DailyPick.Custom(0), pick(6))
+        assertEquals(DailyPick.Custom(1), pick(13))
+        assertEquals(DailyPick.Custom(2), pick(20))
+        assertEquals(DailyPick.Custom(0), pick(27))
+        assertEquals(DailyPick.Library(7), pick(6, custom = 0))
+    }
+
     @Test
     fun negativeDayClampsToZero() {
         assertEquals(QuotePicker.quoteIndex(0, 10, 42uL), QuotePicker.quoteIndex(-5, 10, 42uL))

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		00186CACF688EC920FAC380B /* MyQuotesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD70325F7BAE4B52D8453D8A /* MyQuotesView.swift */; };
 		0CE5C986C6FDAB9387F79D36 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F4495CE22256CA403529CF8 /* RootView.swift */; };
 		398B8C6568D2A78A73420399 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 652AF08E7395D0FADBA01EF7 /* WidgetKit.framework */; };
 		4A07D4B0C5E286A53C033EBC /* quotes.json in Resources */ = {isa = PBXBuildFile; fileRef = 2788327AD3013F12B8AF8682 /* quotes.json */; };
@@ -59,6 +60,7 @@
 		AB7AC650EABF35E967D472D5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		C9F7EC24EA2BFC7E68F750D9 /* QuoteApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = QuoteApp.entitlements; sourceTree = "<group>"; };
 		CA685E8332DE5182663806CE /* QuoteApp.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = QuoteApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		DD70325F7BAE4B52D8453D8A /* MyQuotesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyQuotesView.swift; sourceTree = "<group>"; };
 		F8DDF8ED47CF2A32FB9982DF /* QuoteWidgetExtension.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = QuoteWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -98,6 +100,7 @@
 			isa = PBXGroup;
 			children = (
 				AB7AC650EABF35E967D472D5 /* Info.plist */,
+				DD70325F7BAE4B52D8453D8A /* MyQuotesView.swift */,
 				C9F7EC24EA2BFC7E68F750D9 /* QuoteApp.entitlements */,
 				85F4257EDD57CA62B642A49D /* QuoteApp.swift */,
 				1F4495CE22256CA403529CF8 /* RootView.swift */,
@@ -289,6 +292,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				00186CACF688EC920FAC380B /* MyQuotesView.swift in Sources */,
 				B84BC8C5086B2125A32829CA /* QuoteApp.swift in Sources */,
 				0CE5C986C6FDAB9387F79D36 /* RootView.swift in Sources */,
 				BB43B4A592720B83FF6BF5C8 /* Theme.swift in Sources */,

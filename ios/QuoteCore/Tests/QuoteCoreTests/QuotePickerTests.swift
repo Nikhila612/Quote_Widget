@@ -30,6 +30,46 @@ final class QuotePickerTests: XCTestCase {
             QuotePicker.quoteIndex(dayIndex: 0, count: 10, seed: 42))
     }
 
+    // Shared vectors: Android QuotePickerTest.dailyPickMatchesSharedVectors asserts the same values.
+    func testDailyPickMatchesSharedVectors() {
+        func pick(_ day: Int, custom: Int = 3) -> DailyPick {
+            QuotePicker.dailyPick(dayIndex: day, libraryCount: 10, customCount: custom, seed: 42)
+        }
+        XCTAssertEqual(pick(5), .library(4))
+        XCTAssertEqual(pick(6), .custom(0))
+        XCTAssertEqual(pick(13), .custom(1))
+        XCTAssertEqual(pick(20), .custom(2))
+        XCTAssertEqual(pick(27), .custom(0))
+        XCTAssertEqual(pick(6, custom: 0), .library(7))
+    }
+
+    func testCustomQuotesJoinRotation() throws {
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: "QuoteCoreCustomTests"))
+        defaults.removePersistentDomain(forName: "QuoteCoreCustomTests")
+        let quotes = (0..<5).map { Quote(id: "q\($0)", text: "Quote \($0)", author: "A", tags: []) }
+        let store = QuoteStore(quotes: quotes, defaults: defaults)
+
+        let mine = try XCTUnwrap(store.saveCustomQuote(text: "  I can do hard things. ", author: ""))
+        XCTAssertEqual(mine.text, "I can do hard things.")
+        XCTAssertEqual(mine.author, QuoteStore.defaultCustomAuthor)
+        XCTAssertNil(store.saveCustomQuote(text: "   ", author: "Me"))
+
+        let day6 = try XCTUnwrap(Calendar.current.date(byAdding: .day, value: 6, to: .now))
+        XCTAssertEqual(store.quote(for: day6), mine)
+
+        _ = store.saveCustomQuote(text: "I am enough.", author: "Me", id: mine.id)
+        XCTAssertEqual(store.customQuotes.count, 1)
+        XCTAssertEqual(store.quote(for: day6).text, "I am enough.")
+
+        store.toggleFavourite(store.customQuotes[0])
+        XCTAssertEqual(store.favourites.map(\.id), [mine.id])
+
+        store.deleteCustomQuote(id: mine.id)
+        XCTAssertTrue(store.customQuotes.isEmpty)
+        XCTAssertTrue(store.favourites.isEmpty)
+        XCTAssertTrue(quotes.contains(store.quote(for: day6)))
+    }
+
     func testStoreChangesQuoteAtMidnight() throws {
         let defaults = try XCTUnwrap(UserDefaults(suiteName: "QuoteCoreTests"))
         defaults.removePersistentDomain(forName: "QuoteCoreTests")

@@ -11,6 +11,9 @@ struct RootView: View {
             TodayView()
                 .tabItem { Label("Today", systemImage: "sun.max") }
                 .tag(AppTab.today)
+            MyQuotesView()
+                .tabItem { Label("My Quotes", systemImage: "pencil.line") }
+                .tag(AppTab.myQuotes)
             FavouritesView()
                 .tabItem { Label("Favourites", systemImage: "heart") }
                 .tag(AppTab.favourites)

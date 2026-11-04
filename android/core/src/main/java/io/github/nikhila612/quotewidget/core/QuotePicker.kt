@@ -11,7 +11,24 @@ data class Quote(
  * Deterministic daily pick. Must stay identical to
  * ios/QuoteCore/Sources/QuoteCore/QuotePicker.swift — both share the same test vectors.
  */
+sealed interface DailyPick {
+    data class Library(val index: Int) : DailyPick
+    data class Custom(val index: Int) : DailyPick
+}
+
 object QuotePicker {
+
+    /** A user's own quote takes every 7th day (days 6, 13, 20, ...) when they have any. */
+    const val CUSTOM_EVERY = 7
+
+    /** What to show on day [dayIndex]: a library quote, or one of the user's own quotes. */
+    fun dailyPick(dayIndex: Long, libraryCount: Int, customCount: Int, seed: ULong): DailyPick {
+        val day = maxOf(0L, dayIndex)
+        if (customCount > 0 && day % CUSTOM_EVERY == (CUSTOM_EVERY - 1).toLong()) {
+            return DailyPick.Custom(((day / CUSTOM_EVERY) % customCount).toInt())
+        }
+        return DailyPick.Library(quoteIndex(day, libraryCount, seed))
+    }
 
     /** Index into the quote list for day [dayIndex] (days since install). No repeats within a cycle. */
     fun quoteIndex(dayIndex: Long, count: Int, seed: ULong): Int {

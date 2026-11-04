@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
@@ -96,6 +97,7 @@ private fun QuoteAppTheme(content: @Composable () -> Unit) {
 
 private enum class Tab(val label: String, val icon: ImageVector) {
     Today("Today", Icons.Filled.Home),
+    MyQuotes("My Quotes", Icons.Filled.Create),
     Favourites("Favourites", Icons.Filled.Favorite),
     History("History", Icons.Filled.DateRange),
     Settings("Settings", Icons.Filled.Settings),
@@ -108,9 +110,12 @@ private fun QuoteApp(repository: QuoteRepository) {
     val context = LocalContext.current
     val favourites by repository.favouriteIds.collectAsState(initial = emptySet())
     val theme by repository.theme.collectAsState(initial = WidgetTheme.SUNRISE)
-    val today by produceState<Quote?>(initialValue = null) { value = repository.quoteFor() }
+    val customQuotes by repository.customQuotes.collectAsState(initial = emptyList())
+    // Recomputed when the user's own quotes change: today may be one of theirs.
+    val today by produceState<Quote?>(initialValue = null, customQuotes) { value = repository.quoteFor() }
 
     val toggle: (Quote) -> Unit = { quote -> scope.launch { repository.toggleFavourite(quote.id) } }
+    val customChanged: suspend () -> Unit = { QuoteGlanceWidget().updateAll(context) }
 
     Scaffold(
         bottomBar = {
@@ -129,9 +134,24 @@ private fun QuoteApp(repository: QuoteRepository) {
         Box(Modifier.padding(padding)) {
             when (tab) {
                 Tab.Today -> today?.let { TodayScreen(it, theme, it.id in favourites, toggle) }
+                Tab.MyQuotes -> MyQuotesScreen(
+                    quotes = customQuotes,
+                    onSave = { text, author, existing ->
+                        scope.launch {
+                            repository.saveCustomQuote(text, author, existing?.id)
+                            customChanged()
+                        }
+                    },
+                    onDelete = { quote ->
+                        scope.launch {
+                            repository.deleteCustomQuote(quote.id)
+                            customChanged()
+                        }
+                    },
+                )
                 Tab.Favourites -> QuoteListScreen(
                     title = "Favourites",
-                    items = repository.quotes.filter { it.id in favourites }.map { null to it },
+                    items = (customQuotes + repository.quotes).filter { it.id in favourites }.map { null to it },
                     empty = "Tap the heart on a quote to save it here.",
                 )
                 Tab.History -> {

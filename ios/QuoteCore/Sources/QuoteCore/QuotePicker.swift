@@ -2,7 +2,24 @@ import Foundation
 
 /// Deterministic daily pick. Must stay byte-for-byte identical to
 /// android/core/src/main/java/.../QuotePicker.kt — both share the same test vectors.
+public enum DailyPick: Equatable, Sendable {
+    case library(Int)
+    case custom(Int)
+}
+
 public enum QuotePicker {
+
+    /// A user's own quote takes every 7th day (days 6, 13, 20, ...) when they have any.
+    public static let customEvery = 7
+
+    /// What to show on day `dayIndex`: a library quote, or one of the user's own quotes.
+    public static func dailyPick(dayIndex: Int, libraryCount: Int, customCount: Int, seed: UInt64) -> DailyPick {
+        let day = max(0, dayIndex)
+        if customCount > 0, day % customEvery == customEvery - 1 {
+            return .custom((day / customEvery) % customCount)
+        }
+        return .library(quoteIndex(dayIndex: day, count: libraryCount, seed: seed))
+    }
 
     /// Index into the quote list to show on day `dayIndex` (days since install).
     /// Every quote is shown once per cycle of `count` days before any repeat.
