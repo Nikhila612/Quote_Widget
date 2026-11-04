@@ -346,6 +346,14 @@
     [
       "Gibran, Kahlil",
       "Sand and Foam"
+    ],
+    [
+      "Gibran, Kahlil",
+      "The Madman"
+    ],
+    [
+      "Gibran, Kahlil",
+      "The Forerunner"
     ]
   ],
   "John Muir": [
@@ -596,6 +604,10 @@
     [
       "Smiles, Samuel",
       "Thrift"
+    ],
+    [
+      "Smiles, Samuel",
+      "Self Help"
     ]
   ],
   "Thomas Carlyle": [
@@ -668,12 +680,28 @@
     [
       "Marden, Orison Swett",
       "Pushing to the Front"
+    ],
+    [
+      "Marden, Orison Swett",
+      "The Victorious Attitude"
+    ],
+    [
+      "Marden, Orison Swett",
+      "Architects of Fate"
+    ],
+    [
+      "Marden, Orison Swett",
+      "An Iron Will"
     ]
   ],
   "James Allen": [
     [
       "Allen, James",
       "As a man thinketh"
+    ],
+    [
+      "Allen, James",
+      "The Way of Peace"
     ]
   ],
   "Arnold Bennett": [
@@ -684,6 +712,14 @@
     [
       "Bennett, Arnold",
       "The Human Machine"
+    ],
+    [
+      "Bennett, Arnold",
+      "Self and self-management"
+    ],
+    [
+      "Bennett, Arnold",
+      "Mental Efficiency"
     ]
   ],
   "Eleanor H. Porter": [
@@ -932,6 +968,28 @@
     [
       "La Rochefoucauld",
       "Reflections; or Sentences and Moral Maxims"
+    ]
+  ],
+  "Charles Wagner": [
+    [
+      "Wagner, Charles",
+      "The Simple Life"
+    ]
+  ],
+  "Booker T. Washington": [
+    [
+      "Washington, Booker T",
+      "Up from Slavery"
+    ],
+    [
+      "Washington, Booker T",
+      "Character Building"
+    ]
+  ],
+  "L. Frank Baum": [
+    [
+      "Baum, L. Frank",
+      "The Wonderful Wizard of Oz"
     ]
   ]
 }
