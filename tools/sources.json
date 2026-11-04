@@ -50,6 +50,10 @@
     [
       "Thoreau, Henry David",
       "A Week on the Concord"
+    ],
+    [
+      "Thoreau, Henry David",
+      "Familiar Letters"
     ]
   ],
   "Marcus Aurelius": [
@@ -70,6 +74,10 @@
     [
       "Seneca",
       "Minor Dialogues"
+    ],
+    [
+      "Seneca",
+      "Seneca on Benefits"
     ]
   ],
   "Epictetus": [
@@ -212,6 +220,10 @@
     [
       "Dickens, Charles",
       "The Pickwick Papers"
+    ],
+    [
+      "Dickens, Charles",
+      "The Cricket on the Hearth"
     ]
   ],
   "Edward Young": [
@@ -224,6 +236,18 @@
     [
       "Alcott, Louisa May",
       "Little Women"
+    ],
+    [
+      "Alcott, Louisa May",
+      "Little Men"
+    ],
+    [
+      "Alcott, Louisa May",
+      "An Old-Fashioned Girl"
+    ],
+    [
+      "Alcott, Louisa May",
+      "Jo's Boys"
     ]
   ],
   "L. M. Montgomery": [
@@ -276,6 +300,10 @@
     [
       "Stevenson, Robert Louis",
       "Essays of Travel"
+    ],
+    [
+      "Stevenson, Robert Louis",
+      "A Christmas Sermon"
     ]
   ],
   "Victor Hugo": [
@@ -700,6 +728,10 @@
     [
       "Chesterton, G. K.",
       "All Things Considered"
+    ],
+    [
+      "Chesterton, G. K.",
+      "Orthodoxy"
     ]
   ],
   "Jerome K. Jerome": [
@@ -804,6 +836,12 @@
     [
       "Mabie, Hamilton Wright",
       "Under the Trees"
+    ]
+  ],
+  "Izaak Walton": [
+    [
+      "Walton, Izaak",
+      "The Compleat Angler"
     ]
   ]
 }
