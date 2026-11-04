@@ -1,0 +1,79 @@
+# Generate the Xcode project with: xcodegen generate   (brew install xcodegen)
+name: QuoteWidget
+options:
+  bundleIdPrefix: io.github.nikhila612
+  deploymentTarget:
+    iOS: "17.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    DEVELOPMENT_TEAM: ""
+    CODE_SIGN_STYLE: Automatic
+packages:
+  QuoteCore:
+    path: QuoteCore
+targets:
+  QuoteApp:
+    type: application
+    platform: iOS
+    sources:
+      - QuoteApp
+      - Shared
+      - path: ../shared/quotes.json
+        buildPhase: resources
+    dependencies:
+      - package: QuoteCore
+      - target: QuoteWidgetExtension
+    entitlements:
+      path: QuoteApp/QuoteApp.entitlements
+      properties:
+        com.apple.security.application-groups: [group.io.github.nikhila612.quotewidget]
+    info:
+      path: QuoteApp/Info.plist
+      properties:
+        CFBundleDisplayName: Daily Quote
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        CFBundleURLTypes:
+          - CFBundleURLName: io.github.nikhila612.quotewidget
+            CFBundleURLSchemes: [quotewidget]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: io.github.nikhila612.quotewidget
+        ASSETCATALOG_COMPILER_APPICON_NAME: ""
+  QuoteWidgetExtension:
+    type: app-extension
+    platform: iOS
+    sources:
+      - QuoteWidget
+      - Shared
+      - path: ../shared/quotes.json
+        buildPhase: resources
+    dependencies:
+      - package: QuoteCore
+      - sdk: WidgetKit.framework
+      - sdk: SwiftUI.framework
+    entitlements:
+      path: QuoteWidget/QuoteWidget.entitlements
+      properties:
+        com.apple.security.application-groups: [group.io.github.nikhila612.quotewidget]
+    info:
+      path: QuoteWidget/Info.plist
+      properties:
+        CFBundleDisplayName: Daily Quote
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: io.github.nikhila612.quotewidget.widget
+schemes:
+  QuoteApp:
+    build:
+      targets:
+        QuoteApp: all
+    test:
+      targets:
+        - package: QuoteCore/QuoteCoreTests
