@@ -5,6 +5,7 @@ Downloads source texts from Project Gutenberg into tools/.texts (git-ignored),
 then reports for every quote:
   FOUND    the wording appears in the author's text (punctuation ignored)
   CLOSE    a near match was found; the actual wording is printed so the quote can be fixed
+  COLLECTION  not in the author's own texts, but word-for-word in a quotation or proverb collection
   MISSING  no match: a translation, a letter, a work not on Gutenberg, or wrong wording
   SKIPPED  proverbs and authors with no texts listed in tools/sources.json
 
@@ -90,6 +91,9 @@ def tokens(s):
 
 
 corpus = {}
+secondary = {}
+for work in sources.get("_secondary", []):
+    secondary[work[1]] = tokens(text_for(work))
 for author, queries in sources.items():
     if author.startswith("_"):
         continue
@@ -98,7 +102,28 @@ for author, queries in sources.items():
         toks += tokens(text_for(work))
     corpus[author] = toks
 
-counts = {"FOUND": 0, "CLOSE": 0, "MISSING": 0, "SKIPPED": 0}
+counts = {"FOUND": 0, "CLOSE": 0, "COLLECTION": 0, "MISSING": 0, "SKIPPED": 0}
+def best_match(words, toks):
+    """Best share of the quote's words found in order near one spot in toks, and that spot's text."""
+    index = {}
+    for i, t in enumerate(toks):
+        if t in words:
+            index.setdefault(t, []).append(i)
+    best, best_at = 0.0, None
+    anchors = sorted((w for w in set(words) if w in index), key=lambda w: len(index[w]))[:3]
+    for w in anchors:
+        off = words.index(w)
+        for i in index[w][:4000]:
+            start = max(0, i - off - 3)
+            window = toks[start:start + len(words) + 6]
+            m = SequenceMatcher(None, words, window, autojunk=False)
+            blocks = [b for b in m.get_matching_blocks() if b.size]
+            ratio = sum(b.size for b in blocks) / len(words)
+            if ratio > best:
+                best, best_at = ratio, " ".join(window[blocks[0].b:blocks[-1].b + blocks[-1].size])
+    return best, best_at
+
+
 for q in quotes:
     words = tokens(q["text"])
     toks = corpus.get(q["author"])
@@ -131,6 +156,12 @@ for q in quotes:
             status, note = "CLOSE", f"{best:.0%} text: \"{best_at}\""
         else:
             status, note = "MISSING", f"best {best:.0%}"
+    if status in ("MISSING", "SKIPPED"):
+        for name, stoks in secondary.items():
+            score, _ = best_match(words, stoks)
+            if score >= 0.999:
+                status, note = "COLLECTION", f"found in {name}"
+                break
     counts[status] += 1
     if status != "FOUND":
         print(f"{status:8} {q['id']} {q['author']}: {q['text']}\n         {note}")

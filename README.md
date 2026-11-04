@@ -30,7 +30,7 @@ python3 tools/validate_quotes.py
 
 Rules: positive, 25 words or fewer, no religious wording, and accurately attributed. Use authors who died more than 70 years ago, works published before 1930, or traditional proverbs. Put the work it comes from in `source`; use `Attributed` only when the source can't be pinned down, and recheck those first.
 
-To check wording against the original books, run the source checker. It downloads the public-domain texts listed in `tools/sources.json` from Project Gutenberg into `tools/.texts/` (git-ignored, about 60 MB on first run). It then reports each quote as FOUND, CLOSE (with the book's actual wording), MISSING or SKIPPED:
+To check wording against the original books, run the source checker. It downloads the public-domain texts listed in `tools/sources.json` from Project Gutenberg into `tools/.texts/` (git-ignored, about 60 MB on first run). It then reports each quote as FOUND, CLOSE (with the book's actual wording), COLLECTION (not in the author's own books, but word-for-word in a quotation or proverb collection such as Bartlett's *Familiar Quotations*), MISSING or SKIPPED:
 
 ```bash
 python3 tools/check_quotes.py

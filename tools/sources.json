@@ -1061,5 +1061,48 @@
       "Arnold, Matthew",
       "Culture and Anarchy"
     ]
+  ],
+  "_secondary_about": "Quotation and proverb collections. Quotes not found in their author's own works are looked up here; a hit is reported as COLLECTION.",
+  "_secondary": [
+    [
+      "Bartlett, John",
+      "Familiar Quotations"
+    ],
+    [
+      "Bohn, Henry G.",
+      "A Polyglot of Foreign Proverbs"
+    ],
+    [
+      "Kelly, Walter K.",
+      "Proverbs of All Nations"
+    ],
+    [
+      "Preston, Thomas",
+      "A Dictionary of English Proverbs"
+    ],
+    [
+      "Clouston, W. A.",
+      "Book of Wise Sayings"
+    ],
+    [
+      "Wood, James",
+      "Dictionary of Quotations"
+    ],
+    [
+      "Trench, Richard Chenevix",
+      "Proverbs and Their Lessons"
+    ]
+  ],
+  "Johann Wolfgang von Goethe": [
+    [
+      "Goethe, Johann Wolfgang von",
+      "Maxims and Reflections"
+    ]
+  ],
+  "Abraham Lincoln": [
+    [
+      "Lincoln, Abraham",
+      "The Lincoln Year Book"
+    ]
   ]
 }
