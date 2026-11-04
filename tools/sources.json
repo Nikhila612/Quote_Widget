@@ -28,12 +28,28 @@
     [
       "Emerson, Ralph Waldo",
       "The Conduct of Life"
+    ],
+    [
+      "Emerson, Ralph Waldo",
+      "Representative Men"
     ]
   ],
   "Henry David Thoreau": [
     [
       "Thoreau",
       "Walden"
+    ],
+    [
+      "Thoreau, Henry David",
+      "Walking"
+    ],
+    [
+      "Thoreau, Henry David",
+      "Excursions"
+    ],
+    [
+      "Thoreau, Henry David",
+      "A Week on the Concord"
     ]
   ],
   "Marcus Aurelius": [
@@ -106,6 +122,10 @@
     [
       "Keller, Helen",
       "The Story of My Life"
+    ],
+    [
+      "Keller, Helen",
+      "The World I Live In"
     ]
   ],
   "Emily Dickinson": [
@@ -130,6 +150,10 @@
     [
       "Whitman, Walt",
       "Leaves of Grass"
+    ],
+    [
+      "Whitman, Walt",
+      "Specimen Days"
     ]
   ],
   "William Shakespeare": [
@@ -248,6 +272,10 @@
     [
       "Stevenson, Robert Louis",
       "Memories and Portraits"
+    ],
+    [
+      "Stevenson, Robert Louis",
+      "Essays of Travel"
     ]
   ],
   "Victor Hugo": [
@@ -296,6 +324,18 @@
     [
       "Muir, John",
       "My First Summer in the Sierra"
+    ],
+    [
+      "Muir, John",
+      "The Mountains of California"
+    ],
+    [
+      "Muir, John",
+      "Travels in Alaska"
+    ],
+    [
+      "Muir, John",
+      "The Yosemite"
     ]
   ],
   "John Lubbock": [
@@ -364,12 +404,24 @@
     [
       "Burnett, Frances Hodgson",
       "A Little Princess"
+    ],
+    [
+      "Burnett, Frances Hodgson",
+      "Little Lord Fauntleroy"
     ]
   ],
   "Kenneth Grahame": [
     [
       "Grahame, Kenneth",
       "The Wind in the Willows"
+    ],
+    [
+      "Grahame, Kenneth",
+      "The Golden Age"
+    ],
+    [
+      "Grahame, Kenneth",
+      "Dream Days"
     ]
   ],
   "Henry Wadsworth Longfellow": [
@@ -472,6 +524,10 @@
     [
       "Montaigne",
       "Essays of Michel de Montaigne"
+    ],
+    [
+      "Montaigne",
+      "Essays of Michel de Montaigne — Complete"
     ]
   ],
   "Voltaire": [
@@ -602,6 +658,10 @@
     [
       "Porter, Eleanor H",
       "Pollyanna Grows Up"
+    ],
+    [
+      "Porter, Eleanor H",
+      "Just David"
     ]
   ],
   "Henry van Dyke": [
@@ -656,6 +716,94 @@
     [
       "Wiggin, Kate Douglas",
       "Rebecca of Sunnybrook Farm"
+    ],
+    [
+      "Wiggin, Kate Douglas",
+      "Mother Carey"
+    ],
+    [
+      "Wiggin, Kate Douglas",
+      "New Chronicles of Rebecca"
+    ]
+  ],
+  "John Burroughs": [
+    [
+      "Burroughs, John",
+      "Wake-Robin"
+    ],
+    [
+      "Burroughs, John",
+      "The Breath of Life"
+    ],
+    [
+      "Burroughs, John",
+      "Time and Change"
+    ]
+  ],
+  "Richard Jefferies": [
+    [
+      "Jefferies, Richard",
+      "The Story of My Heart"
+    ],
+    [
+      "Jefferies, Richard",
+      "The Open Air"
+    ],
+    [
+      "Jefferies, Richard",
+      "Field and Hedgerow"
+    ]
+  ],
+  "Gene Stratton-Porter": [
+    [
+      "Stratton-Porter, Gene",
+      "A Girl of the Limberlost"
+    ],
+    [
+      "Stratton-Porter, Gene",
+      "Freckles"
+    ],
+    [
+      "Stratton-Porter, Gene",
+      "The Harvester"
+    ],
+    [
+      "Stratton-Porter, Gene",
+      "Laddie"
+    ]
+  ],
+  "Hans Christian Andersen": [
+    [
+      "Andersen, H. C.",
+      "Andersen's Fairy Tales"
+    ],
+    [
+      "Andersen, H. C.",
+      "Stories from Hans Andersen"
+    ]
+  ],
+  "Johanna Spyri": [
+    [
+      "Spyri, Johanna",
+      "Heidi"
+    ]
+  ],
+  "Charles Lamb": [
+    [
+      "Lamb, Charles",
+      "Elia"
+    ]
+  ],
+  "Washington Irving": [
+    [
+      "Irving, Washington",
+      "The Sketch-Book of Geoffrey Crayon"
+    ]
+  ],
+  "Hamilton Wright Mabie": [
+    [
+      "Mabie, Hamilton Wright",
+      "Under the Trees"
     ]
   ]
 }
