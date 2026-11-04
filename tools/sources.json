@@ -248,6 +248,18 @@
     [
       "Alcott, Louisa May",
       "Jo's Boys"
+    ],
+    [
+      "Alcott, Louisa May",
+      "Eight Cousins"
+    ],
+    [
+      "Alcott, Louisa May",
+      "Rose in Bloom"
+    ],
+    [
+      "Alcott, Louisa May",
+      "Jack and Jill"
     ]
   ],
   "L. M. Montgomery": [
@@ -278,6 +290,18 @@
     [
       "Montgomery, L. M.",
       "The Story Girl"
+    ],
+    [
+      "Montgomery, L. M.",
+      "Chronicles of Avonlea"
+    ],
+    [
+      "Montgomery, L. M.",
+      "Kilmeny of the Orchard"
+    ],
+    [
+      "Montgomery, L. M.",
+      "The Golden Road"
     ]
   ],
   "Robert Louis Stevenson": [
@@ -312,6 +336,10 @@
     [
       "Stevenson, Robert Louis",
       "Underwoods"
+    ],
+    [
+      "Stevenson, Robert Louis",
+      "Lay Morals"
     ]
   ],
   "Victor Hugo": [
@@ -452,6 +480,10 @@
     [
       "Burnett, Frances Hodgson",
       "Little Lord Fauntleroy"
+    ],
+    [
+      "Burnett, Frances Hodgson",
+      "The Land of the Blue Flower"
     ]
   ],
   "Kenneth Grahame": [
@@ -614,12 +646,32 @@
     [
       "Carlyle, Thomas",
       "Past and Present"
+    ],
+    [
+      "Carlyle, Thomas",
+      "Sartor Resartus"
+    ],
+    [
+      "Carlyle, Thomas",
+      "On Heroes, Hero-Worship"
     ]
   ],
   "John Ruskin": [
     [
       "Ruskin, John",
       "Unto This Last"
+    ],
+    [
+      "Ruskin, John",
+      "Sesame and Lilies"
+    ],
+    [
+      "Ruskin, John",
+      "The Crown of Wild Olive"
+    ],
+    [
+      "Ruskin, John",
+      "The Ethics of the Dust"
     ]
   ],
   "Aesop": [
@@ -990,6 +1042,24 @@
     [
       "Baum, L. Frank",
       "The Wonderful Wizard of Oz"
+    ]
+  ],
+  "Joseph Addison": [
+    [
+      "Addison, Joseph",
+      "Essays and Tales"
+    ]
+  ],
+  "William Hazlitt": [
+    [
+      "Hazlitt, William",
+      "Table Talk"
+    ]
+  ],
+  "Matthew Arnold": [
+    [
+      "Arnold, Matthew",
+      "Culture and Anarchy"
     ]
   ]
 }
