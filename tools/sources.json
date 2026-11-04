@@ -1,0 +1,521 @@
+{
+  "_about": "Works check_quotes.py downloads from Project Gutenberg. Each quote author maps to [catalogue author text, title text] pairs; the lowest-numbered English match is used.",
+  "Ralph Waldo Emerson": [
+    [
+      "Emerson, Ralph Waldo",
+      "Essays — First Series"
+    ],
+    [
+      "Emerson, Ralph Waldo",
+      "Essays — Second Series"
+    ],
+    [
+      "Emerson, Ralph Waldo",
+      "Nature"
+    ],
+    [
+      "Emerson, Ralph Waldo",
+      "Society and Solitude"
+    ],
+    [
+      "Emerson, Ralph Waldo",
+      "Letters and Social Aims"
+    ],
+    [
+      "Emerson, Ralph Waldo",
+      "Poems"
+    ],
+    [
+      "Emerson, Ralph Waldo",
+      "The Conduct of Life"
+    ]
+  ],
+  "Henry David Thoreau": [
+    [
+      "Thoreau",
+      "Walden"
+    ]
+  ],
+  "Marcus Aurelius": [
+    [
+      "Marcus Aurelius",
+      "Thoughts of Marcus Aurelius"
+    ],
+    [
+      "Marcus Aurelius",
+      "Meditations"
+    ]
+  ],
+  "Seneca": [
+    [
+      "Seneca",
+      "Morals"
+    ],
+    [
+      "Seneca",
+      "Minor Dialogues"
+    ]
+  ],
+  "Epictetus": [
+    [
+      "Epictetus",
+      "Discourses"
+    ],
+    [
+      "Epictetus",
+      "Enchiridion"
+    ]
+  ],
+  "Aristotle": [
+    [
+      "Aristotle",
+      "Ethics"
+    ]
+  ],
+  "Laozi": [
+    [
+      "Laozi",
+      "Tao"
+    ]
+  ],
+  "Confucius": [
+    [
+      "Confucius",
+      "Analects"
+    ]
+  ],
+  "Benjamin Franklin": [
+    [
+      "Franklin, Benjamin",
+      "Poor Richard"
+    ],
+    [
+      "Franklin, Benjamin",
+      "Way to Wealth"
+    ]
+  ],
+  "Helen Keller": [
+    [
+      "Keller, Helen",
+      "Optimism"
+    ],
+    [
+      "Keller, Helen",
+      "The Story of My Life"
+    ]
+  ],
+  "Emily Dickinson": [
+    [
+      "Dickinson, Emily",
+      "Poems by Emily Dickinson, Series One"
+    ],
+    [
+      "Dickinson, Emily",
+      "Poems by Emily Dickinson, Series Two"
+    ],
+    [
+      "Dickinson, Emily",
+      "Poems by Emily Dickinson, Third Series"
+    ],
+    [
+      "Dickinson, Emily",
+      "Letters"
+    ]
+  ],
+  "Walt Whitman": [
+    [
+      "Whitman, Walt",
+      "Leaves of Grass"
+    ]
+  ],
+  "William Shakespeare": [
+    [
+      "Shakespeare, William",
+      "The Complete Works of William Shakespeare"
+    ]
+  ],
+  "Jane Austen": [
+    [
+      "Austen, Jane",
+      "Pride and Prejudice"
+    ],
+    [
+      "Austen, Jane",
+      "Mansfield Park"
+    ],
+    [
+      "Austen, Jane",
+      "Emma"
+    ],
+    [
+      "Austen, Jane",
+      "Persuasion"
+    ],
+    [
+      "Austen, Jane",
+      "Sense and Sensibility"
+    ],
+    [
+      "Austen, Jane",
+      "Northanger Abbey"
+    ]
+  ],
+  "Charles Dickens": [
+    [
+      "Dickens, Charles",
+      "Our Mutual Friend"
+    ],
+    [
+      "Dickens, Charles",
+      "A Christmas Carol"
+    ],
+    [
+      "Dickens, Charles",
+      "Sketches by Boz"
+    ],
+    [
+      "Dickens, Charles",
+      "The Old Curiosity Shop"
+    ],
+    [
+      "Dickens, Charles",
+      "David Copperfield"
+    ],
+    [
+      "Dickens, Charles",
+      "The Pickwick Papers"
+    ]
+  ],
+  "Edward Young": [
+    [
+      "Young, Edward",
+      "Night Thoughts"
+    ]
+  ],
+  "Louisa May Alcott": [
+    [
+      "Alcott, Louisa May",
+      "Little Women"
+    ]
+  ],
+  "L. M. Montgomery": [
+    [
+      "Montgomery, L. M.",
+      "Anne of Green Gables"
+    ],
+    [
+      "Montgomery, L. M.",
+      "Anne of Avonlea"
+    ],
+    [
+      "Montgomery, L. M.",
+      "Anne of the Island"
+    ]
+  ],
+  "Robert Louis Stevenson": [
+    [
+      "Stevenson, Robert Louis",
+      "Virginibus Puerisque"
+    ],
+    [
+      "Stevenson, Robert Louis",
+      "A Child's Garden of Verses"
+    ]
+  ],
+  "Victor Hugo": [
+    [
+      "Hugo, Victor",
+      "Les Misérables"
+    ]
+  ],
+  "Rabindranath Tagore": [
+    [
+      "Tagore, Rabindranath",
+      "Stray Birds"
+    ],
+    [
+      "Tagore, Rabindranath",
+      "Fireflies"
+    ],
+    [
+      "Tagore, Rabindranath",
+      "Gitanjali"
+    ],
+    [
+      "Tagore, Rabindranath",
+      "The Gardener"
+    ]
+  ],
+  "Kahlil Gibran": [
+    [
+      "Gibran, Kahlil",
+      "The Prophet"
+    ],
+    [
+      "Gibran, Kahlil",
+      "Sand and Foam"
+    ]
+  ],
+  "John Muir": [
+    [
+      "Muir, John",
+      "Our National Parks"
+    ],
+    [
+      "Muir, John",
+      "Steep Trails"
+    ],
+    [
+      "Muir, John",
+      "My First Summer in the Sierra"
+    ]
+  ],
+  "John Lubbock": [
+    [
+      "Lubbock, John",
+      "The Use of Life"
+    ],
+    [
+      "Lubbock, John",
+      "The Beauties of Nature"
+    ],
+    [
+      "Lubbock, John",
+      "The Pleasures of Life"
+    ]
+  ],
+  "Mark Twain": [
+    [
+      "Twain, Mark",
+      "Pudd'nhead Wilson"
+    ],
+    [
+      "Twain, Mark",
+      "Following the Equator"
+    ],
+    [
+      "Twain, Mark",
+      "The Mysterious Stranger"
+    ]
+  ],
+  "Oscar Wilde": [
+    [
+      "Wilde, Oscar",
+      "An Ideal Husband"
+    ],
+    [
+      "Wilde, Oscar",
+      "Lady Windermere's Fan"
+    ],
+    [
+      "Wilde, Oscar",
+      "De Profundis"
+    ]
+  ],
+  "Lewis Carroll": [
+    [
+      "Carroll, Lewis",
+      "Alice's Adventures in Wonderland"
+    ],
+    [
+      "Carroll, Lewis",
+      "Through the Looking-Glass"
+    ]
+  ],
+  "J. M. Barrie": [
+    [
+      "Barrie, J. M.",
+      "Peter Pan"
+    ]
+  ],
+  "Frances Hodgson Burnett": [
+    [
+      "Burnett, Frances Hodgson",
+      "The Secret Garden"
+    ],
+    [
+      "Burnett, Frances Hodgson",
+      "A Little Princess"
+    ]
+  ],
+  "Kenneth Grahame": [
+    [
+      "Grahame, Kenneth",
+      "The Wind in the Willows"
+    ]
+  ],
+  "Henry Wadsworth Longfellow": [
+    [
+      "Longfellow, Henry Wadsworth",
+      "Voices of the Night"
+    ],
+    [
+      "Longfellow, Henry Wadsworth",
+      "Kavanagh"
+    ],
+    [
+      "Longfellow, Henry Wadsworth",
+      "Complete Poetical Works"
+    ]
+  ],
+  "Alfred, Lord Tennyson": [
+    [
+      "Tennyson",
+      "Poems"
+    ]
+  ],
+  "William Wordsworth": [
+    [
+      "Wordsworth, William",
+      "Lyrical Ballads"
+    ],
+    [
+      "Wordsworth, William",
+      "Poems"
+    ]
+  ],
+  "John Keats": [
+    [
+      "Keats, John",
+      "Endymion"
+    ],
+    [
+      "Keats, John",
+      "Poems"
+    ],
+    [
+      "Keats, John",
+      "Letters"
+    ]
+  ],
+  "William Blake": [
+    [
+      "Blake, William",
+      "The Marriage of Heaven and Hell"
+    ],
+    [
+      "Blake, William",
+      "Poems of William Blake"
+    ]
+  ],
+  "Elizabeth Barrett Browning": [
+    [
+      "Browning, Elizabeth Barrett",
+      "Poems"
+    ]
+  ],
+  "Robert Browning": [
+    [
+      "Browning, Robert",
+      "Dramatis Personae"
+    ]
+  ],
+  "Robert Frost": [
+    [
+      "Frost, Robert",
+      "North of Boston"
+    ],
+    [
+      "Frost, Robert",
+      "Mountain Interval"
+    ]
+  ],
+  "Charlotte Brontë": [
+    [
+      "Brontë, Charlotte",
+      "Jane Eyre"
+    ]
+  ],
+  "George Eliot": [
+    [
+      "Eliot, George",
+      "Middlemarch"
+    ],
+    [
+      "Eliot, George",
+      "Scenes of Clerical Life"
+    ],
+    [
+      "Eliot, George",
+      "The Spanish Gypsy"
+    ]
+  ],
+  "Michel de Montaigne": [
+    [
+      "Montaigne",
+      "Essays of Michel de Montaigne"
+    ]
+  ],
+  "Voltaire": [
+    [
+      "Voltaire",
+      "Candide"
+    ]
+  ],
+  "Plato": [
+    [
+      "Plato",
+      "The Republic"
+    ]
+  ],
+  "Samuel Johnson": [
+    [
+      "Johnson, Samuel",
+      "Rasselas"
+    ],
+    [
+      "Johnson, Samuel",
+      "Idler"
+    ]
+  ],
+  "Samuel Smiles": [
+    [
+      "Smiles, Samuel",
+      "Self-Help"
+    ]
+  ],
+  "Thomas Carlyle": [
+    [
+      "Carlyle, Thomas",
+      "Past and Present"
+    ]
+  ],
+  "John Ruskin": [
+    [
+      "Ruskin, John",
+      "Unto This Last"
+    ]
+  ],
+  "Aesop": [
+    [
+      "Jacobs, Joseph",
+      "The Fables of Aesop"
+    ],
+    [
+      "Aesop",
+      "Fables"
+    ]
+  ],
+  "Theodore Roosevelt": [
+    [
+      "Roosevelt, Theodore",
+      "The Strenuous Life"
+    ]
+  ],
+  "Cicero": [
+    [
+      "Cicero",
+      "Treatises on Friendship and Old Age"
+    ],
+    [
+      "Cicero",
+      "Letters"
+    ]
+  ],
+  "Francis de Sales": [
+    [
+      "Francis, de Sales",
+      "Devout Life"
+    ]
+  ]
+}

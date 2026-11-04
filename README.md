@@ -1,6 +1,6 @@
-# Daily Quote Widget
+# Sunnote
 
-A home-screen widget for iOS and Android that shows one uplifting quote per day, changing at local midnight, with no repeats until the whole library has been shown.
+Sunnote is a home-screen widget for iOS and Android that shows one uplifting quote per day, changing at local midnight, with no repeats until the whole library has been shown.
 
 ```
 shared/quotes.json   # the quote library, bundled into both apps
@@ -29,6 +29,14 @@ python3 tools/validate_quotes.py
 ```
 
 Rules: positive, 25 words or fewer, no religious wording, and accurately attributed. Use authors who died more than 70 years ago, works published before 1930, or traditional proverbs. Put the work it comes from in `source`; use `Attributed` only when the source can't be pinned down, and recheck those first.
+
+To check wording against the original books, run the source checker. It downloads the public-domain texts listed in `tools/sources.json` from Project Gutenberg into `tools/.texts/` (git-ignored, about 60 MB on first run). It then reports each quote as FOUND, CLOSE (with the book's actual wording), MISSING or SKIPPED:
+
+```bash
+python3 tools/check_quotes.py
+```
+
+MISSING is expected for letters, speeches, proverbs and works Gutenberg doesn't have. Check a CLOSE result against the printed wording and fix it.
 
 Only ever append. Once the app ships, changing or reordering ids would reshuffle people's daily order and break their favourites.
 

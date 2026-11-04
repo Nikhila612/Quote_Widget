@@ -34,7 +34,7 @@ targets:
     info:
       path: QuoteApp/Info.plist
       properties:
-        CFBundleDisplayName: Daily Quote
+        CFBundleDisplayName: Sunnote
         UILaunchScreen: {}
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
         CFBundleURLTypes:
@@ -63,7 +63,7 @@ targets:
     info:
       path: QuoteWidget/Info.plist
       properties:
-        CFBundleDisplayName: Daily Quote
+        CFBundleDisplayName: Sunnote
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
     settings:
