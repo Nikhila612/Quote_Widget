@@ -86,6 +86,9 @@ def text_for(work):
 
 
 def tokens(s):
+    # old books print contractions with a space: "There 's", "I 've", "'t is"
+    s = re.sub(r"(\w) [’']\s?(s|t|ll|d|re|ve|m)\b", r"\1'\2", s)
+    s = re.sub(r"[’']t is\b", "'tis", s)
     s = s.lower().replace("’", "'").replace("‘", "'").replace("—", " ").replace("–", " ").replace("_", " ")
     return re.findall(r"[a-z0-9']+", s)
 
