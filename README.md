@@ -22,4 +22,14 @@ android/             # Compose app + Glance widget (app) + core module
 Both platforms use the same rule (`QuotePicker`): days since install pick a position in a per-install shuffled order (SplitMix64 + Fisher–Yates). Both test suites assert the same shuffle vectors, so keep the two implementations in sync.
 
 ## Adding quotes
-Append to `shared/quotes.json` with the next `id`. Rules: positive, 25 words or fewer, accurately attributed (public domain or original).
+Append to `shared/quotes.json` with the next `id`, then check the file:
+
+```bash
+python3 tools/validate_quotes.py
+```
+
+Rules: positive, 25 words or fewer, no religious wording, and accurately attributed. Use authors who died more than 70 years ago, works published before 1930, or traditional proverbs. Put the work it comes from in `source`; use `Attributed` only when the source can't be pinned down, and recheck those first.
+
+Only ever append. Once the app ships, changing or reordering ids would reshuffle people's daily order and break their favourites.
+
+Note: this folder is in iCloud-synced Documents. If a build fails with "defined multiple times" or files ending in ` 2`, delete the `build` folders and rebuild.
