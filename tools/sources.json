@@ -92,6 +92,10 @@
     [
       "Franklin, Benjamin",
       "Way to Wealth"
+    ],
+    [
+      "Franklin, Benjamin",
+      "The Autobiography of Benjamin Franklin"
     ]
   ],
   "Helen Keller": [
@@ -210,6 +214,22 @@
     [
       "Montgomery, L. M.",
       "Anne of the Island"
+    ],
+    [
+      "Montgomery, L. M.",
+      "Anne's House of Dreams"
+    ],
+    [
+      "Montgomery, L. M.",
+      "Rainbow Valley"
+    ],
+    [
+      "Montgomery, L. M.",
+      "Rilla of Ingleside"
+    ],
+    [
+      "Montgomery, L. M.",
+      "The Story Girl"
     ]
   ],
   "Robert Louis Stevenson": [
@@ -220,6 +240,14 @@
     [
       "Stevenson, Robert Louis",
       "A Child's Garden of Verses"
+    ],
+    [
+      "Stevenson, Robert Louis",
+      "Across the Plains"
+    ],
+    [
+      "Stevenson, Robert Louis",
+      "Memories and Portraits"
     ]
   ],
   "Victor Hugo": [
@@ -471,7 +499,11 @@
   "Samuel Smiles": [
     [
       "Smiles, Samuel",
-      "Self-Help"
+      "Character"
+    ],
+    [
+      "Smiles, Samuel",
+      "Thrift"
     ]
   ],
   "Thomas Carlyle": [
@@ -516,6 +548,114 @@
     [
       "Francis, de Sales",
       "Devout Life"
+    ]
+  ],
+  "Ella Wheeler Wilcox": [
+    [
+      "Wilcox, Ella Wheeler",
+      "Poems of Cheer"
+    ],
+    [
+      "Wilcox, Ella Wheeler",
+      "Poems of Power"
+    ],
+    [
+      "Wilcox, Ella Wheeler",
+      "Poems of Optimism"
+    ],
+    [
+      "Wilcox, Ella Wheeler",
+      "Poems of Progress"
+    ]
+  ],
+  "Orison Swett Marden": [
+    [
+      "Marden, Orison Swett",
+      "Cheerfulness as a Life Power"
+    ],
+    [
+      "Marden, Orison Swett",
+      "Pushing to the Front"
+    ]
+  ],
+  "James Allen": [
+    [
+      "Allen, James",
+      "As a man thinketh"
+    ]
+  ],
+  "Arnold Bennett": [
+    [
+      "Bennett, Arnold",
+      "How to Live on 24 Hours a Day"
+    ],
+    [
+      "Bennett, Arnold",
+      "The Human Machine"
+    ]
+  ],
+  "Eleanor H. Porter": [
+    [
+      "Porter, Eleanor H",
+      "Pollyanna"
+    ],
+    [
+      "Porter, Eleanor H",
+      "Pollyanna Grows Up"
+    ]
+  ],
+  "Henry van Dyke": [
+    [
+      "van Dyke, Henry",
+      "Fisherman's Luck"
+    ],
+    [
+      "van Dyke, Henry",
+      "Little Rivers"
+    ],
+    [
+      "van Dyke, Henry",
+      "Days Off"
+    ]
+  ],
+  "Elbert Hubbard": [
+    [
+      "Hubbard, Elbert",
+      "Love, Life & Work"
+    ],
+    [
+      "Hubbard, Elbert",
+      "Message to Garcia"
+    ]
+  ],
+  "G. K. Chesterton": [
+    [
+      "Chesterton, G. K.",
+      "Tremendous Trifles"
+    ],
+    [
+      "Chesterton, G. K.",
+      "Heretics"
+    ],
+    [
+      "Chesterton, G. K.",
+      "All Things Considered"
+    ]
+  ],
+  "Jerome K. Jerome": [
+    [
+      "Jerome, Jerome K",
+      "Idle Thoughts of an Idle Fellow"
+    ],
+    [
+      "Jerome, Jerome K",
+      "Three men in a boat"
+    ]
+  ],
+  "Kate Douglas Wiggin": [
+    [
+      "Wiggin, Kate Douglas",
+      "Rebecca of Sunnybrook Farm"
     ]
   ]
 }
