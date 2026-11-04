@@ -304,6 +304,14 @@
     [
       "Stevenson, Robert Louis",
       "A Christmas Sermon"
+    ],
+    [
+      "Stevenson, Robert Louis",
+      "Songs of Travel"
+    ],
+    [
+      "Stevenson, Robert Louis",
+      "Underwoods"
     ]
   ],
   "Victor Hugo": [
@@ -704,6 +712,14 @@
     [
       "van Dyke, Henry",
       "Days Off"
+    ],
+    [
+      "van Dyke, Henry",
+      "Music, and Other Poems"
+    ],
+    [
+      "van Dyke, Henry",
+      "The Poems of Henry Van Dyke"
     ]
   ],
   "Elbert Hubbard": [
@@ -842,6 +858,80 @@
     [
       "Walton, Izaak",
       "The Compleat Angler"
+    ]
+  ],
+  "Sara Teasdale": [
+    [
+      "Teasdale, Sara",
+      "Rivers to the Sea"
+    ],
+    [
+      "Teasdale, Sara",
+      "Love Songs"
+    ],
+    [
+      "Teasdale, Sara",
+      "Flame and Shadow"
+    ],
+    [
+      "Teasdale, Sara",
+      "Helen of Troy"
+    ]
+  ],
+  "Joyce Kilmer": [
+    [
+      "Kilmer, Joyce",
+      "Trees, and Other Poems"
+    ]
+  ],
+  "Paul Laurence Dunbar": [
+    [
+      "Dunbar, Paul Laurence",
+      "The Complete Poems"
+    ]
+  ],
+  "James Whitcomb Riley": [
+    [
+      "Riley, James Whitcomb",
+      "Green Fields and Running Brooks"
+    ],
+    [
+      "Riley, James Whitcomb",
+      "Afterwhiles"
+    ]
+  ],
+  "W. H. Davies": [
+    [
+      "Davies, W. H",
+      "Foliage"
+    ]
+  ],
+  "Henri-Frédéric Amiel": [
+    [
+      "Amiel",
+      "Amiel's Journal"
+    ]
+  ],
+  "Oliver Wendell Holmes": [
+    [
+      "Holmes, Oliver Wendell",
+      "The Autocrat of the Breakfast-Table"
+    ]
+  ],
+  "Lord Chesterfield": [
+    [
+      "Chesterfield",
+      "Letters to His Son, 1746-47"
+    ],
+    [
+      "Chesterfield",
+      "Letters to His Son, 1748"
+    ]
+  ],
+  "François de La Rochefoucauld": [
+    [
+      "La Rochefoucauld",
+      "Reflections; or Sentences and Moral Maxims"
     ]
   ]
 }
