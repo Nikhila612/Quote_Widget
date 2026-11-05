@@ -24,6 +24,12 @@ xcodebuild -project ios/QuoteWidget.xcodeproj -scheme QuoteApp -destination 'gen
 ## Screenshots
 Widgets on a real home screen (5 Nov 2026) are in [docs/screenshots](docs/screenshots).
 
+Store images (App Store 1320 x 2868, Google Play 1080 x 1920, Play feature graphic and 512 px icon) are in [docs/store](docs/store). They are built from the raw captures in `docs/store/raw`; to change a caption, edit `tools/make_store_images.swift` and run:
+
+```bash
+swift tools/make_store_images.swift docs/store/raw docs/store
+```
+
 ## Android
 - Open `android/` in Android Studio, run the `app` configuration.
 - Core tests: `cd android && ./gradlew :core:testDebugUnitTest`

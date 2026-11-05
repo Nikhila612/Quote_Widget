@@ -1,0 +1,153 @@
+// Builds Sunnote's store images from raw simulator/emulator screenshots.
+// Usage: swift tools/make_store_images.swift <raw-screenshots-dir> <output-dir>
+// Expects in the raw dir: ios-{home,today,myquotes,favourites}.png, ios-home-{light,dark}.png,
+// and-{home,today,myquotes,favourites}.png, and-home-{light,dark}.png, and the icon at
+// ios/QuoteApp/Assets.xcassets/AppIcon.appiconset/AppIcon.png (run from the repo root).
+import AppKit
+import CoreGraphics
+import CoreText
+
+let args = CommandLine.arguments
+let rawDir = URL(fileURLWithPath: args.count > 1 ? args[1] : "raw")
+let outDir = URL(fileURLWithPath: args.count > 2 ? args[2] : "docs/store")
+let space = CGColorSpace(name: CGColorSpace.sRGB)!
+let ink = CGColor(srgbRed: 0.23, green: 0.12, blue: 0.16, alpha: 1)
+
+func load(_ name: String) -> CGImage {
+    let url = rawDir.appendingPathComponent(name)
+    guard let src = CGImageSourceCreateWithURL(url as CFURL, nil),
+          let img = CGImageSourceCreateImageAtIndex(src, 0, nil) else { fatalError("cannot read \(url.path)") }
+    return img
+}
+
+func canvas(_ w: Int, _ h: Int) -> CGContext {
+    let ctx = CGContext(data: nil, width: w, height: h, bitsPerComponent: 8, bytesPerRow: 0, space: space,
+                        bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)!
+    let g = CGGradient(colorsSpace: space, colors: [
+        CGColor(srgbRed: 1.00, green: 0.86, blue: 0.75, alpha: 1),
+        CGColor(srgbRed: 0.99, green: 0.72, blue: 0.70, alpha: 1),
+        CGColor(srgbRed: 0.84, green: 0.76, blue: 0.95, alpha: 1)] as CFArray, locations: [0, 0.55, 1])!
+    ctx.drawLinearGradient(g, start: CGPoint(x: 0, y: CGFloat(h)), end: CGPoint(x: CGFloat(w), y: 0), options: [])
+    return ctx
+}
+
+/// Centred caption; `top` is the distance from the top edge to the first line's top.
+func caption(_ ctx: CGContext, _ text: String, width: Int, height: Int, top: CGFloat, size: CGFloat) {
+    let font = CTFontCreateWithName("Georgia-Bold" as CFString, size, nil)
+    let para = NSMutableParagraphStyle(); para.alignment = .center; para.lineSpacing = size * 0.15
+    let attr = NSAttributedString(string: text, attributes: [
+        .font: font, .foregroundColor: NSColor(cgColor: ink)!, .paragraphStyle: para])
+    let setter = CTFramesetterCreateWithAttributedString(attr)
+    let boxW = CGFloat(width) * 0.84
+    let fit = CTFramesetterSuggestFrameSizeWithConstraints(setter, CFRange(), nil, CGSize(width: boxW, height: .greatestFiniteMagnitude), nil)
+    let rect = CGRect(x: (CGFloat(width) - boxW) / 2, y: CGFloat(height) - top - fit.height, width: boxW, height: fit.height)
+    let frame = CTFramesetterCreateFrame(setter, CFRange(), CGPath(rect: rect, transform: nil), nil)
+    CTFrameDraw(frame, ctx)
+}
+
+/// Draws an image into rect with rounded corners and a soft shadow.
+func place(_ ctx: CGContext, _ img: CGImage, in rect: CGRect, radius: CGFloat) {
+    ctx.saveGState()
+    ctx.setShadow(offset: CGSize(width: 0, height: -radius * 0.25), blur: radius * 0.9,
+                  color: CGColor(srgbRed: 0.3, green: 0.1, blue: 0.2, alpha: 0.28))
+    ctx.addPath(CGPath(roundedRect: rect, cornerWidth: radius, cornerHeight: radius, transform: nil))
+    ctx.setFillColor(CGColor(gray: 1, alpha: 1)); ctx.fillPath()
+    ctx.restoreGState()
+    ctx.saveGState()
+    ctx.addPath(CGPath(roundedRect: rect, cornerWidth: radius, cornerHeight: radius, transform: nil))
+    ctx.clip(); ctx.draw(img, in: rect)
+    ctx.restoreGState()
+}
+
+func save(_ ctx: CGContext, _ name: String) {
+    let rep = NSBitmapImageRep(cgImage: ctx.makeImage()!)
+    let url = outDir.appendingPathComponent(name)
+    try! FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
+    try! rep.representation(using: .png, properties: [:])!.write(to: url)
+    print("wrote \(name) \(ctx.width)x\(ctx.height)")
+}
+
+/// Screenshot under a caption, scaled to fill the space below it.
+func screen(_ raw: String, _ text: String, w: Int, h: Int, out: String) {
+    let ctx = canvas(w, h)
+    let capTop = CGFloat(h) * 0.055, capSize = CGFloat(w) * 0.07
+    caption(ctx, text, width: w, height: h, top: capTop, size: capSize)
+    let img = load(raw)
+    let areaTop = CGFloat(h) * 0.20, bottomPad = CGFloat(h) * 0.04
+    let availH = CGFloat(h) - areaTop - bottomPad
+    let scale = min(availH / CGFloat(img.height), CGFloat(w) * 0.82 / CGFloat(img.width))
+    let iw = CGFloat(img.width) * scale, ih = CGFloat(img.height) * scale
+    place(ctx, img, in: CGRect(x: (CGFloat(w) - iw) / 2, y: bottomPad, width: iw, height: ih), radius: iw * 0.09)
+    save(ctx, out)
+}
+
+/// Crops a pixel rect given from the image's top-left.
+func crop(_ img: CGImage, x: Int, y: Int, w: Int, h: Int) -> CGImage {
+    img.cropping(to: CGRect(x: x, y: y, width: w, height: h))!
+}
+
+/// Three widget crops (sunrise, light, dark) stacked under a caption, each with its label above it.
+func styles(_ crops: [CGImage], _ text: String, w: Int, h: Int, widthFraction: CGFloat, out: String) {
+    let ctx = canvas(w, h)
+    caption(ctx, text, width: w, height: h, top: CGFloat(h) * 0.055, size: CGFloat(w) * 0.07)
+    let labels = ["Sunrise", "Light", "Dark"]
+    let labelSize = CGFloat(w) * 0.045
+    let font = CTFontCreateWithName("Georgia" as CFString, labelSize, nil)
+    let cw = CGFloat(w) * widthFraction
+    let ch = cw * CGFloat(crops[0].height) / CGFloat(crops[0].width)
+    let top = CGFloat(h) * 0.82, bottom = CGFloat(h) * 0.04       // region below the caption
+    let block = labelSize * 1.9 + ch                                // label + card
+    let gap = max(0, (top - bottom - 3 * block) / 2)
+    for (i, img) in crops.enumerated() {
+        let blockTop = top - CGFloat(i) * (block + gap)
+        let line = CTLineCreateWithAttributedString(NSAttributedString(string: labels[i], attributes: [
+            .font: font, .foregroundColor: NSColor(cgColor: ink)!]))
+        let lw = CTLineGetTypographicBounds(line, nil, nil, nil)
+        ctx.textPosition = CGPoint(x: (CGFloat(w) - CGFloat(lw)) / 2, y: blockTop - labelSize)
+        CTLineDraw(line, ctx)
+        let rect = CGRect(x: (CGFloat(w) - cw) / 2, y: blockTop - block, width: cw, height: ch)
+        place(ctx, img, in: rect, radius: min(cw, ch) * 0.1)
+    }
+    save(ctx, out)
+}
+
+// ---- iPhone 6.9-inch: 1320 x 2868 ----
+let iw = 1320, ih = 2868
+screen("ios-home.png", "A happy little quote, every day", w: iw, h: ih, out: "ios/1-home.png")
+screen("ios-today.png", "Words worth reading, from great writers", w: iw, h: ih, out: "ios/2-today.png")
+let iSmall = ["ios-home.png", "ios-home-light.png", "ios-home-dark.png"].map { crop(load($0), x: 104, y: 295, w: 510, h: 510) }
+styles(iSmall, "Sunrise, Light or Dark", w: iw, h: ih, widthFraction: 0.40, out: "ios/3-styles.png")
+screen("ios-myquotes.png", "Add your own words", w: iw, h: ih, out: "ios/4-my-quotes.png")
+screen("ios-favourites.png", "Keep the ones you love", w: iw, h: ih, out: "ios/5-favourites.png")
+
+// ---- Google Play phone: 1080 x 1920 (Play allows at most 2:1) ----
+let aw = 1080, ah = 1920
+screen("and-home.png", "A happy little quote, every day", w: aw, h: ah, out: "android/1-home.png")
+screen("and-today.png", "Words worth reading, from great writers", w: aw, h: ah, out: "android/2-today.png")
+let aWide = ["and-home.png", "and-home-light.png", "and-home-dark.png"].map { crop(load($0), x: 64, y: 396, w: 952, h: 528) }
+styles(aWide, "Sunrise, Light or Dark", w: aw, h: ah, widthFraction: 0.62, out: "android/3-styles.png")
+screen("and-myquotes.png", "Add your own words", w: aw, h: ah, out: "android/4-my-quotes.png")
+screen("and-favourites.png", "Keep the ones you love", w: aw, h: ah, out: "android/5-favourites.png")
+
+// ---- Google Play feature graphic 1024 x 500 and 512 px icon ----
+let iconURL = URL(fileURLWithPath: "ios/QuoteApp/Assets.xcassets/AppIcon.appiconset/AppIcon.png")
+let iconSrc = CGImageSourceCreateWithURL(iconURL as CFURL, nil)!
+let icon = CGImageSourceCreateImageAtIndex(iconSrc, 0, nil)!
+do {
+    let ctx = canvas(1024, 500)
+    place(ctx, icon, in: CGRect(x: 90, y: 110, width: 280, height: 280), radius: 62)
+    let title = CTLineCreateWithAttributedString(NSAttributedString(string: "Sunnote", attributes: [
+        .font: CTFontCreateWithName("Georgia-Bold" as CFString, 96, nil), .foregroundColor: NSColor(cgColor: ink)!]))
+    ctx.textPosition = CGPoint(x: 430, y: 262); CTLineDraw(title, ctx)
+    let tag = CTLineCreateWithAttributedString(NSAttributedString(string: "A happy little quote, every day", attributes: [
+        .font: CTFontCreateWithName("Georgia" as CFString, 38, nil), .foregroundColor: NSColor(cgColor: ink)!]))
+    ctx.textPosition = CGPoint(x: 432, y: 190); CTLineDraw(tag, ctx)
+    save(ctx, "android/feature-graphic.png")
+}
+do {
+    let ctx = CGContext(data: nil, width: 512, height: 512, bitsPerComponent: 8, bytesPerRow: 0, space: space,
+                        bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue)!
+    ctx.interpolationQuality = .high
+    ctx.draw(icon, in: CGRect(x: 0, y: 0, width: 512, height: 512))
+    save(ctx, "android/icon-512.png")
+}
