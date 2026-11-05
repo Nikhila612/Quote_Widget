@@ -221,26 +221,72 @@ private fun QuoteApp(repository: QuoteRepository, resumes: Int) {
     }
 }
 
-/** Background for the Today screen in each style; Wallpaper uses the dynamic colour scheme. */
+/** Gradient stops for each style, top-left to bottom-right; Wallpaper uses the dynamic colour scheme. */
 @Composable
-fun WidgetTheme.appBrush(): Brush = when (this) {
-    WidgetTheme.SUNRISE -> Brush.linearGradient(listOf(Color(0xFFFFCCAB), Color(0xFFFA9E9E), Color(0xFFC2A8E8)))
-    WidgetTheme.LIGHT -> Brush.verticalGradient(listOf(Color(0xFFFCFCFC), Color(0xFFF2F2F2)))
-    WidgetTheme.DARK -> Brush.verticalGradient(listOf(Color(0xFF1F1F2E), Color(0xFF12121A)))
-    WidgetTheme.OCEAN -> Brush.linearGradient(listOf(Color(0xFFBDEFF5), Color(0xFF8CCCEB), Color(0xFF80A6E3)))
-    WidgetTheme.FOREST -> Brush.linearGradient(listOf(Color(0xFFDEF0D1), Color(0xFFA8D4A1), Color(0xFF80B58F)))
-    WidgetTheme.LAVENDER -> Brush.linearGradient(listOf(Color(0xFFEDE3FF), Color(0xFFCCB8F5), Color(0xFFA89CEB)))
-    WidgetTheme.ROSE -> Brush.linearGradient(listOf(Color(0xFFFFE3ED), Color(0xFFF7B5CC), Color(0xFFE68FB0)))
-    WidgetTheme.SAND -> Brush.linearGradient(listOf(Color(0xFFFAF2E3), Color(0xFFEDD9B8), Color(0xFFDEBF94)))
-    WidgetTheme.MIDNIGHT -> Brush.linearGradient(listOf(Color(0xFF2B3A66), Color(0xFF1C2647), Color(0xFF0F1430)))
-    WidgetTheme.WALLPAPER -> Brush.verticalGradient(
-        listOf(MaterialTheme.colorScheme.primaryContainer, MaterialTheme.colorScheme.secondaryContainer))
+fun WidgetTheme.appStops(): List<Color> = when (this) {
+    WidgetTheme.SUNRISE -> listOf(Color(0xFFFFCCAB), Color(0xFFFA9E9E), Color(0xFFC2A8E8))
+    WidgetTheme.LIGHT -> listOf(Color(0xFFFCFCFC), Color(0xFFF2F2F2))
+    WidgetTheme.DARK -> listOf(Color(0xFF1F1F2E), Color(0xFF12121A))
+    WidgetTheme.OCEAN -> listOf(Color(0xFFBDEFF5), Color(0xFF8CCCEB), Color(0xFF80A6E3))
+    WidgetTheme.FOREST -> listOf(Color(0xFFDEF0D1), Color(0xFFA8D4A1), Color(0xFF80B58F))
+    WidgetTheme.LAVENDER -> listOf(Color(0xFFEDE3FF), Color(0xFFCCB8F5), Color(0xFFA89CEB))
+    WidgetTheme.ROSE -> listOf(Color(0xFFFFE3ED), Color(0xFFF7B5CC), Color(0xFFE68FB0))
+    WidgetTheme.SAND -> listOf(Color(0xFFFAF2E3), Color(0xFFEDD9B8), Color(0xFFDEBF94))
+    WidgetTheme.MIDNIGHT -> listOf(Color(0xFF2B3A66), Color(0xFF1C2647), Color(0xFF0F1430))
+    WidgetTheme.WALLPAPER -> listOf(MaterialTheme.colorScheme.primaryContainer, MaterialTheme.colorScheme.secondaryContainer)
+}
+
+/** Background for the Today screen in each style. */
+@Composable
+fun WidgetTheme.appBrush(): Brush = appStops().let { stops ->
+    if (this == WidgetTheme.LIGHT || this == WidgetTheme.DARK || this == WidgetTheme.WALLPAPER) Brush.verticalGradient(stops)
+    else Brush.linearGradient(stops)
 }
 
 /** Text colour for each style in the app. */
 @Composable
 fun WidgetTheme.appInk(): Color =
     if (this == WidgetTheme.WALLPAPER) MaterialTheme.colorScheme.onPrimaryContainer else ink
+
+/** Share button: the quote as a picture in the current style, saved to Photos, or as text. */
+@Composable
+private fun ShareMenu(quote: Quote, stops: List<Color>, ink: Color) {
+    val context = LocalContext.current
+    var open by remember { mutableStateOf(false) }
+    Box {
+        IconButton(onClick = { open = true }) {
+            Icon(Icons.Filled.Share, contentDescription = "Share quote", tint = ink)
+        }
+        androidx.compose.material3.DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
+            androidx.compose.material3.DropdownMenuItem(
+                text = { Text("Share as image") },
+                onClick = { open = false; QuoteCard.share(context, QuoteCard.render(quote, stops, ink)) },
+            )
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                androidx.compose.material3.DropdownMenuItem(
+                    text = { Text("Save to Photos") },
+                    onClick = {
+                        open = false
+                        val saved = QuoteCard.saveToPhotos(context, QuoteCard.render(quote, stops, ink))
+                        android.widget.Toast.makeText(context,
+                            if (saved) "Saved to Pictures/Sunote" else "Couldn't save the picture",
+                            android.widget.Toast.LENGTH_SHORT).show()
+                    },
+                )
+            }
+            androidx.compose.material3.DropdownMenuItem(
+                text = { Text("Share text") },
+                onClick = {
+                    open = false
+                    val send = Intent(Intent.ACTION_SEND)
+                        .setType("text/plain")
+                        .putExtra(Intent.EXTRA_TEXT, "“${quote.text}” — ${quote.author}")
+                    context.startActivity(Intent.createChooser(send, "Share quote"))
+                },
+            )
+        }
+    }
+}
 
 @Composable
 private fun TodayScreen(
@@ -280,14 +326,7 @@ private fun TodayScreen(
                     tint = ink,
                 )
             }
-            IconButton(onClick = {
-                val send = Intent(Intent.ACTION_SEND)
-                    .setType("text/plain")
-                    .putExtra(Intent.EXTRA_TEXT, "“${quote.text}” — ${quote.author}")
-                context.startActivity(Intent.createChooser(send, "Share quote"))
-            }) {
-                Icon(Icons.Filled.Share, contentDescription = "Share quote", tint = ink)
-            }
+            ShareMenu(quote, stops = theme.appStops(), ink = ink)
         }
         androidx.compose.material3.AssistChip(
             onClick = onCheckIn,

@@ -45,6 +45,9 @@ Users write their own quotes in My Quotes. They take turns every 7th day, and **
 
 Widget styles: Sunrise, Light, Dark, Ocean, Forest, Lavender, Rose, Sand and Midnight on both platforms, set in Settings (iOS `Shared/Theme.swift`, Android `widget_bg_*.xml` plus the ink colours in `QuoteGlanceWidget.kt`). Android 12+ also has **Wallpaper**, which uses the phone's wallpaper colours through `GlanceTheme`. On iOS 18 tinted and clear home screens the widget follows the system look automatically.
 
+## Sharing as a picture
+Share on the Today screen offers the quote as a 1080 x 1350 picture in the current widget style (iOS `QuoteCard.swift`, Android `ui/QuoteCard.kt`; both use the same font-size steps), as text, or saved to Photos. iOS needs `NSPhotoLibraryAddUsageDescription` for Save Image; Android saves to `Pictures/Sunote` through MediaStore (Android 10+, no permission) and shares through a `FileProvider` limited to `cache/shared`.
+
 ## Adding quotes
 Append to `shared/quotes.json` with the next `id`, then check the file:
 

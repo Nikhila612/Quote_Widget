@@ -36,6 +36,7 @@ struct RootView: View {
 
 struct TodayView: View {
     @Environment(QuoteModel.self) private var model
+    @State private var shareImage: Image?
 
     var body: some View {
         let quote = model.today
@@ -60,9 +61,19 @@ struct TodayView: View {
                             .symbolEffect(.bounce, value: model.isFavourite(quote))
                     }
                     .accessibilityLabel(model.isFavourite(quote) ? "Remove from favourites" : "Add to favourites")
-                    ShareLink(item: "\u{201C}\(quote.text)\u{201D} — \(quote.author)") {
+                    Menu {
+                        if let card = shareImage {
+                            ShareLink(item: card, preview: SharePreview("Today's quote", image: card)) {
+                                Label("Share as image", systemImage: "photo")
+                            }
+                        }
+                        ShareLink(item: "\u{201C}\(quote.text)\u{201D} — \(quote.author)") {
+                            Label("Share text", systemImage: "text.quote")
+                        }
+                    } label: {
                         Image(systemName: "square.and.arrow.up").font(.title2)
                     }
+                    .accessibilityLabel("Share quote")
                 }
                 .padding(.top, 8)
 
@@ -80,6 +91,9 @@ struct TodayView: View {
             .foregroundStyle(model.theme.foreground)
             .padding(32)
             .animation(.easeInOut, value: quote.id)
+        }
+        .task(id: "\(quote.id)-\(model.theme.rawValue)") {
+            shareImage = QuoteCard.image(for: quote, theme: model.theme)
         }
     }
 }

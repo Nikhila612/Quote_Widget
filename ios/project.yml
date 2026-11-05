@@ -36,6 +36,7 @@ targets:
       properties:
         CFBundleDisplayName: Sunote
         UILaunchScreen: {}
+        NSPhotoLibraryAddUsageDescription: Sunote saves quote pictures to your photos only when you tap Save Image.
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
         CFBundleURLTypes:
           - CFBundleURLName: io.github.nikhila612.quotewidget
