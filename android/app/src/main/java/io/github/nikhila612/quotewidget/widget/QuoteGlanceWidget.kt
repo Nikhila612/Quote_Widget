@@ -2,6 +2,12 @@ package io.github.nikhila612.quotewidget.widget
 
 import android.content.Context
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -42,9 +48,17 @@ class QuoteGlanceWidget : GlanceAppWidget() {
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         val repository = QuoteRepository(context)
-        val quote = repository.quoteFor()
-        val theme = repository.currentTheme()
-        provideContent { QuoteWidgetContent(quote, theme) }
+        val initialQuote = repository.quoteFor()
+        val initialTheme = repository.currentTheme()
+        provideContent {
+            // Keep watching settings: a Glance session can outlive the first draw,
+            // so a theme change or a new quote of the user's must update it in place.
+            val theme by repository.theme.collectAsState(initial = initialTheme)
+            val customQuotes by repository.customQuotes.collectAsState(initial = null)
+            var quote by remember { mutableStateOf(initialQuote) }
+            LaunchedEffect(customQuotes) { quote = repository.quoteFor() }
+            QuoteWidgetContent(quote, theme)
+        }
     }
 
     companion object {

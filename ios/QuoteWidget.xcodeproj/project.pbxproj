@@ -10,6 +10,7 @@
 		00186CACF688EC920FAC380B /* MyQuotesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD70325F7BAE4B52D8453D8A /* MyQuotesView.swift */; };
 		0CE5C986C6FDAB9387F79D36 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F4495CE22256CA403529CF8 /* RootView.swift */; };
 		398B8C6568D2A78A73420399 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 652AF08E7395D0FADBA01EF7 /* WidgetKit.framework */; };
+		4300B088217135EC8D5A21CC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CE6E5362CD7970EEBA127892 /* Assets.xcassets */; };
 		4A07D4B0C5E286A53C033EBC /* quotes.json in Resources */ = {isa = PBXBuildFile; fileRef = 2788327AD3013F12B8AF8682 /* quotes.json */; };
 		831ACA48073AC4CE4AB34CE6 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A10C539ED2CB7F939D8333F /* Theme.swift */; };
 		AC3CB06FCF97A1FF2827BC4B /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 45D5A2B113597773F185D876 /* SwiftUI.framework */; };
@@ -60,6 +61,7 @@
 		AB7AC650EABF35E967D472D5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		C9F7EC24EA2BFC7E68F750D9 /* QuoteApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = QuoteApp.entitlements; sourceTree = "<group>"; };
 		CA685E8332DE5182663806CE /* QuoteApp.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = QuoteApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CE6E5362CD7970EEBA127892 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		DD70325F7BAE4B52D8453D8A /* MyQuotesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyQuotesView.swift; sourceTree = "<group>"; };
 		F8DDF8ED47CF2A32FB9982DF /* QuoteWidgetExtension.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = QuoteWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -99,6 +101,7 @@
 		2D7D6BA8D3B9F10CD32BF617 /* QuoteApp */ = {
 			isa = PBXGroup;
 			children = (
+				CE6E5362CD7970EEBA127892 /* Assets.xcassets */,
 				AB7AC650EABF35E967D472D5 /* Info.plist */,
 				DD70325F7BAE4B52D8453D8A /* MyQuotesView.swift */,
 				C9F7EC24EA2BFC7E68F750D9 /* QuoteApp.entitlements */,
@@ -272,6 +275,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4300B088217135EC8D5A21CC /* Assets.xcassets in Resources */,
 				AF6E4BE858780BF134C70B48 /* quotes.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -380,7 +384,7 @@
 		2522C8AC45F991D7716BF6E0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = "";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = QuoteApp/QuoteApp.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = QuoteApp/Info.plist;
@@ -413,7 +417,7 @@
 		53345A99481041E19FA437A1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = "";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = QuoteApp/QuoteApp.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = QuoteApp/Info.plist;

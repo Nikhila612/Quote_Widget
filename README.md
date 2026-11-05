@@ -13,6 +13,16 @@ android/             # Compose app + Glance widget (app) + core module
 - Set your Team under Signing for both targets before running on a device (the App Group `group.io.github.nikhila612.quotewidget` needs it).
 - Project is generated from `ios/project.yml`: after adding files, run `xcodegen generate` in `ios/`.
 - Core tests: `cd ios/QuoteCore && swift test`
+- Command-line simulator builds must be signed (ad-hoc is enough) or the App Group is dropped and the app and widget show different quotes:
+
+```bash
+xcodebuild -project ios/QuoteWidget.xcodeproj -scheme QuoteApp -destination 'generic/platform=iOS Simulator' CODE_SIGN_IDENTITY=- build
+```
+
+- App icon: drawn by `tools/make_icon.swift` (`swift tools/make_icon.swift ios/QuoteApp/Assets.xcassets/AppIcon.appiconset/AppIcon.png`).
+
+## Screenshots
+Widgets on a real home screen (5 Nov 2026) are in [docs/screenshots](docs/screenshots).
 
 ## Android
 - Open `android/` in Android Studio, run the `app` configuration.
