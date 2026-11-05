@@ -17,7 +17,10 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            // R8 removes unused code and resources and obfuscates names in the store build.
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
 

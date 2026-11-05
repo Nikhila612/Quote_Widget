@@ -13,6 +13,7 @@
 		4300B088217135EC8D5A21CC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CE6E5362CD7970EEBA127892 /* Assets.xcassets */; };
 		4A07D4B0C5E286A53C033EBC /* quotes.json in Resources */ = {isa = PBXBuildFile; fileRef = 2788327AD3013F12B8AF8682 /* quotes.json */; };
 		5CB49C1435341CE822BDC158 /* CheckInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AF431A00A216F1CFDABAAB9 /* CheckInView.swift */; };
+		70037EA8C5203A2A283228C6 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 5735707739A003AC23280157 /* PrivacyInfo.xcprivacy */; };
 		831ACA48073AC4CE4AB34CE6 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A10C539ED2CB7F939D8333F /* Theme.swift */; };
 		AC3CB06FCF97A1FF2827BC4B /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 45D5A2B113597773F185D876 /* SwiftUI.framework */; };
 		ADC3202991F57597D0C826C8 /* QuoteWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = F8DDF8ED47CF2A32FB9982DF /* QuoteWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -21,6 +22,7 @@
 		BA3BC7363537A73C53EF1831 /* QuoteCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DC98587226C5D234F1E2BDE /* QuoteCard.swift */; };
 		BB43B4A592720B83FF6BF5C8 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A10C539ED2CB7F939D8333F /* Theme.swift */; };
 		C940CE100B39655F1D5E55D7 /* QuoteCore in Frameworks */ = {isa = PBXBuildFile; productRef = 2875E1258DA5C51F5271185E /* QuoteCore */; };
+		D6453064BEFCC8B573CF1929 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 49C227491CCE08E42BB8F41C /* PrivacyInfo.xcprivacy */; };
 		EE2A3CDACAED495A439F73FD /* QuoteCore in Frameworks */ = {isa = PBXBuildFile; productRef = 732B650E47FCD00FD8CDE7D8 /* QuoteCore */; };
 		F88ABF979002F23B8C49816E /* QuoteWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18C50F812083A0CBC68E2790 /* QuoteWidget.swift */; };
 /* End PBXBuildFile section */
@@ -58,6 +60,8 @@
 		3A10C539ED2CB7F939D8333F /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		3AF431A00A216F1CFDABAAB9 /* CheckInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckInView.swift; sourceTree = "<group>"; };
 		45D5A2B113597773F185D876 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		49C227491CCE08E42BB8F41C /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		5735707739A003AC23280157 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		652AF08E7395D0FADBA01EF7 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		85F4257EDD57CA62B642A49D /* QuoteApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuoteApp.swift; sourceTree = "<group>"; };
 		8DC98587226C5D234F1E2BDE /* QuoteCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuoteCard.swift; sourceTree = "<group>"; };
@@ -96,6 +100,7 @@
 			isa = PBXGroup;
 			children = (
 				A8860C0AB72EF38570BBABA8 /* Info.plist */,
+				49C227491CCE08E42BB8F41C /* PrivacyInfo.xcprivacy */,
 				2383F772366E74CD0FEB41CF /* QuoteWidget.entitlements */,
 				18C50F812083A0CBC68E2790 /* QuoteWidget.swift */,
 			);
@@ -109,6 +114,7 @@
 				3AF431A00A216F1CFDABAAB9 /* CheckInView.swift */,
 				AB7AC650EABF35E967D472D5 /* Info.plist */,
 				DD70325F7BAE4B52D8453D8A /* MyQuotesView.swift */,
+				5735707739A003AC23280157 /* PrivacyInfo.xcprivacy */,
 				C9F7EC24EA2BFC7E68F750D9 /* QuoteApp.entitlements */,
 				85F4257EDD57CA62B642A49D /* QuoteApp.swift */,
 				8DC98587226C5D234F1E2BDE /* QuoteCard.swift */,
@@ -273,6 +279,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D6453064BEFCC8B573CF1929 /* PrivacyInfo.xcprivacy in Resources */,
 				4A07D4B0C5E286A53C033EBC /* quotes.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -282,6 +289,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4300B088217135EC8D5A21CC /* Assets.xcassets in Resources */,
+				70037EA8C5203A2A283228C6 /* PrivacyInfo.xcprivacy in Resources */,
 				AF6E4BE858780BF134C70B48 /* quotes.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

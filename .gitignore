@@ -16,3 +16,11 @@ tools/.texts/
 
 # iCloud Drive conflict copies (this folder syncs to iCloud)
 * [2-9].*
+
+# Signing keys and their passwords: never commit these
+*.jks
+*.keystore
+*.p12
+*.p8
+*.mobileprovision
+keystore.properties

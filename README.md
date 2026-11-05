@@ -19,6 +19,7 @@ android/             # Compose app + Glance widget (app) + core module
 xcodebuild -project ios/QuoteWidget.xcodeproj -scheme QuoteApp -destination 'generic/platform=iOS Simulator' CODE_SIGN_IDENTITY=- build
 ```
 
+- `PrivacyInfo.xcprivacy` in `QuoteApp/` and `QuoteWidget/` declares no tracking, no collected data, and UserDefaults use (reasons CA92.1 and 1C8F.1, App Group). Update both if a new required-reason API is used.
 - App icon: drawn by `tools/make_icon.swift` (`swift tools/make_icon.swift ios/QuoteApp/Assets.xcassets/AppIcon.appiconset/AppIcon.png`).
 
 ## Screenshots
@@ -33,6 +34,8 @@ swift tools/make_store_images.swift docs/store/raw docs/store
 ## Android
 - Open `android/` in Android Studio, run the `app` configuration.
 - Core tests: `cd android && ./gradlew :core:testDebugUnitTest`
+- Release builds are shrunk with R8 (`app/proguard-rules.pro`). Anything created by class name must be kept there: WorkManager's database and Glance `ActionCallback`s already are. After changing dependencies or adding a widget action, run a release build and tap through the app and widget.
+- Signing keys (`*.jks`, `keystore.properties`) are git-ignored; keep them and their passwords outside the repo.
 
 ## Daily pick
 Both platforms use the same rule (`QuotePicker`): days since install pick a position in a per-install shuffled order (SplitMix64 + Fisher–Yates). Both test suites assert the same shuffle vectors, so keep the two implementations in sync.
