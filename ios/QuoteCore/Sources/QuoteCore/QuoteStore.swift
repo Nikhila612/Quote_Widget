@@ -1,7 +1,7 @@
 import Foundation
 
 public enum WidgetTheme: String, CaseIterable, Identifiable, Sendable {
-    case sunrise, light, dark
+    case sunrise, light, dark, ocean, forest, lavender, rose, sand, midnight
     public var id: String { rawValue }
     public var title: String { rawValue.capitalized }
 }
@@ -23,6 +23,7 @@ public final class QuoteStore {
         static let checkInDay = "checkInDay"      // yyyy-MM-dd of the last check-in
         static let checkInAnswers = "checkInAnswers"
         static let skipDay = "skipDay"            // yyyy-MM-dd the check-in was skipped
+        static let pinnedDay = "pinnedDay"        // yyyy-MM-dd the user put one of their own quotes on the widget
     }
 
     private let defaults: UserDefaults
@@ -92,6 +93,7 @@ public final class QuoteStore {
     @discardableResult
     public func checkIn(_ answers: CheckIn, on date: Date = .now) -> Quote {
         let key = dayKey(date)
+        if defaults.string(forKey: Key.pinnedDay) == key { defaults.removeObject(forKey: Key.pinnedDay) }
         defaults.set(key, forKey: Key.checkInDay)
         defaults.set(try? JSONEncoder().encode(answers), forKey: Key.checkInAnswers)
         var picks = moodPicks
@@ -115,6 +117,27 @@ public final class QuoteStore {
         picks[key] = quotes[choice.index].id
         moodPicks = picks.filter { $0.key >= dayKey(calendar.date(byAdding: .day, value: -60, to: date) ?? date) }
         return quotes[choice.index]
+    }
+
+    // MARK: Showing one of your own quotes today
+
+    /// Puts `quote` (usually one the user wrote) on today's widget. A later check-in replaces it.
+    public func showToday(_ quote: Quote, on date: Date = .now) {
+        let key = dayKey(date)
+        var picks = moodPicks
+        picks[key] = quote.id
+        moodPicks = picks
+        defaults.set(key, forKey: Key.pinnedDay)
+    }
+
+    /// The id of the quote the user chose to show today, if they did.
+    public func shownTodayID(on date: Date = .now) -> String? {
+        defaults.string(forKey: Key.pinnedDay) == dayKey(date) ? moodPicks[dayKey(date)] : nil
+    }
+
+    /// True when today's quote came from a check-in (not from the user choosing a quote).
+    public func isMoodPick(on date: Date = .now) -> Bool {
+        checkIn(on: date) != nil && shownTodayID(on: date) == nil
     }
 
     private var moodPicks: [String: String] {
@@ -170,6 +193,9 @@ public final class QuoteStore {
 
     public func deleteCustomQuote(id: String) {
         writeCustomQuotes(customQuotes.filter { $0.id != id })
+        var picks = moodPicks
+        for (day, picked) in picks where picked == id { picks[day] = nil }
+        moodPicks = picks
         var ids = favouriteIDs
         ids.remove(id)
         defaults.set(Array(ids).sorted(), forKey: Key.favourites)

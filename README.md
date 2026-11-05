@@ -40,6 +40,11 @@ Both platforms use the same rule (`QuotePicker`): days since install pick a posi
 ## Mood check-in
 Once a day the app asks four optional questions (`CheckIn` in `Mood.swift` / `Mood.kt`). `MoodPicker.tag` scores the answers into one of the six quote tags, and `MoodPicker.pick` chooses a quote with that tag from the tag's own shuffled order, skipping anything shown in the last 30 days. The pick is saved per day, so the widget, the app and History all agree. Mood buttons on the large widget (iOS 17 App Intent, Android Glance action) replace the morning's answers with just that feeling. Both test suites assert the same mood vectors.
 
+## Own quotes and widget styles
+Users write their own quotes in My Quotes. They take turns every 7th day, and **Show today** (or the editor's "Show it in today's widget" switch) pins one to today's widget by saving it as today's pick. A later check-in replaces the pinned quote.
+
+Widget styles: Sunrise, Light, Dark, Ocean, Forest, Lavender, Rose, Sand and Midnight on both platforms, set in Settings (iOS `Shared/Theme.swift`, Android `widget_bg_*.xml` plus the ink colours in `QuoteGlanceWidget.kt`). Android 12+ also has **Wallpaper**, which uses the phone's wallpaper colours through `GlanceTheme`. On iOS 18 tinted and clear home screens the widget follows the system look automatically.
+
 ## Adding quotes
 Append to `shared/quotes.json` with the next `id`, then check the file:
 

@@ -22,14 +22,38 @@ struct MyQuotesView: View {
                     List {
                         Section {
                             ForEach(model.customQuotes) { quote in
-                                Button { editing = .edit(quote) } label: { QuoteRow(quote: quote) }
-                                    .tint(.primary)
-                                    .swipeActions {
-                                        Button("Delete", role: .destructive) { model.deleteCustomQuote(quote) }
+                                HStack(alignment: .center, spacing: 12) {
+                                    Button { editing = .edit(quote) } label: {
+                                        VStack(alignment: .leading, spacing: 6) {
+                                            QuoteRow(quote: quote)
+                                            if model.shownTodayID == quote.id {
+                                                Label("On today's widget", systemImage: "sun.max.fill")
+                                                    .font(.caption.weight(.semibold))
+                                                    .foregroundStyle(.orange)
+                                            }
+                                        }
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .contentShape(Rectangle())
                                     }
+                                    .buttonStyle(.borderless)
+                                    .tint(.primary)
+
+                                    if model.shownTodayID != quote.id {
+                                        Button { model.showToday(quote) } label: {
+                                            Label("Show today", systemImage: "sun.max")
+                                                .font(.caption.weight(.semibold))
+                                        }
+                                        .buttonStyle(.bordered)
+                                        .controlSize(.small)
+                                        .accessibilityLabel("Show this quote in today's widget")
+                                    }
+                                }
+                                .swipeActions {
+                                    Button("Delete", role: .destructive) { model.deleteCustomQuote(quote) }
+                                }
                             }
                         } footer: {
-                            Text("One of your quotes appears in the widget once a week, taking turns.")
+                            Text("Tap Show today to put a quote on your widget now. Your quotes also take turns once a week.")
                         }
                     }
                 }
@@ -66,6 +90,7 @@ private struct QuoteEditor: View {
 
     @State private var text = ""
     @State private var author = ""
+    @State private var showToday = true
     @FocusState private var textFocused: Bool
 
     private var trimmed: String { text.trimmingCharacters(in: .whitespacesAndNewlines) }
@@ -92,6 +117,9 @@ private struct QuoteEditor: View {
                     TextField(QuoteStore.defaultCustomAuthor, text: $author)
                         .textInputAutocapitalization(.words)
                 }
+                Section {
+                    Toggle("Show it in today's widget", isOn: $showToday)
+                }
                 if let existing {
                     Section {
                         Button("Delete quote", role: .destructive) {
@@ -107,7 +135,7 @@ private struct QuoteEditor: View {
                 ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
-                        if model.saveCustomQuote(text: text, author: author, existing: existing) { dismiss() }
+                        if model.saveCustomQuote(text: text, author: author, existing: existing, showToday: showToday) { dismiss() }
                     }
                     .disabled(trimmed.isEmpty)
                 }
@@ -115,6 +143,7 @@ private struct QuoteEditor: View {
             .onAppear {
                 text = existing?.text ?? ""
                 author = existing.map { $0.author == QuoteStore.defaultCustomAuthor ? "" : $0.author } ?? ""
+                showToday = existing == nil || model.shownTodayID == existing?.id
                 textFocused = existing == nil
             }
         }

@@ -26,7 +26,14 @@ import kotlin.random.Random
 
 private val Context.dataStore by preferencesDataStore(name = "quote_prefs")
 
-enum class WidgetTheme { SUNRISE, LIGHT, DARK }
+enum class WidgetTheme {
+    SUNRISE, LIGHT, DARK, OCEAN, FOREST, LAVENDER, ROSE, SAND, MIDNIGHT,
+
+    /** Android 12+: colours taken from the wallpaper (Material You). */
+    WALLPAPER;
+
+    val title: String get() = if (this == WALLPAPER) "Wallpaper" else name.lowercase().replaceFirstChar { it.uppercase() }
+}
 
 /** Quotes, install state, favourites and theme — shared by the app and the widget. */
 class QuoteRepository(context: Context) {
@@ -51,7 +58,7 @@ class QuoteRepository(context: Context) {
 
     /** Changes whenever today's quote could change: own quotes or a check-in. The widget watches it. */
     val pickInputs: Flow<List<String?>> = store.data.map { prefs ->
-        listOf(prefs[CUSTOM_QUOTES], prefs[MOOD_PICKS], prefs[CHECKIN_DAY], prefs[CHECKIN_ANSWERS])
+        listOf(prefs[CUSTOM_QUOTES], prefs[MOOD_PICKS], prefs[CHECKIN_DAY], prefs[CHECKIN_ANSWERS], prefs[PINNED_DAY])
     }
 
     /** True until the user checks in or skips today. */
@@ -75,6 +82,7 @@ class QuoteRepository(context: Context) {
     /** Records the answers and picks today's quote to match them. Returns today's quote. */
     suspend fun checkIn(answers: CheckIn, date: LocalDate = LocalDate.now()): Quote {
         val key = date.toString()
+        store.edit { if (it[PINNED_DAY] == key) it.remove(PINNED_DAY) }
         val picks = moodPicks().toMutableMap().apply { remove(key) }
         val tag = MoodPicker.tag(answers)
         if (tag == null) {
@@ -101,6 +109,28 @@ class QuoteRepository(context: Context) {
         }
         return quotes[choice.index]
     }
+
+    // Showing one of your own quotes today.
+
+    /** Puts [quote] (usually one the user wrote) on today's widget. A later check-in replaces it. */
+    suspend fun showToday(quote: Quote, date: LocalDate = LocalDate.now()) {
+        val key = date.toString()
+        val picks = moodPicks() + (key to quote.id)
+        store.edit {
+            it[MOOD_PICKS] = JSONObject(picks as Map<*, *>).toString()
+            it[PINNED_DAY] = key
+        }
+    }
+
+    /** The id of the quote the user chose to show today, if they did. */
+    suspend fun shownTodayId(date: LocalDate = LocalDate.now()): String? {
+        val key = date.toString()
+        return if (store.data.first()[PINNED_DAY] == key) moodPicks()[key] else null
+    }
+
+    /** True when today's quote came from a check-in (not from the user choosing a quote). */
+    suspend fun isMoodPick(date: LocalDate = LocalDate.now()): Boolean =
+        checkInFor(date) != null && shownTodayId(date) == null
 
     private suspend fun moodPicks(): Map<String, String> =
         store.data.first()[MOOD_PICKS]?.let { json ->
@@ -144,6 +174,11 @@ class QuoteRepository(context: Context) {
             val all = prefs[CUSTOM_QUOTES]?.let { runCatching { parseQuotes(it) }.getOrNull() } ?: emptyList()
             prefs[CUSTOM_QUOTES] = toJson(all.filterNot { it.id == id })
             prefs[FAVOURITES] = (prefs[FAVOURITES] ?: emptySet()) - id
+            prefs[MOOD_PICKS]?.let { json ->
+                val o = JSONObject(json)
+                o.keys().asSequence().toList().filter { o.getString(it) == id }.forEach { o.remove(it) }
+                prefs[MOOD_PICKS] = o.toString()
+            }
         }
     }
 
@@ -198,6 +233,7 @@ class QuoteRepository(context: Context) {
         private val CHECKIN_DAY = stringPreferencesKey("checkin_day")
         private val CHECKIN_ANSWERS = stringPreferencesKey("checkin_answers")
         private val SKIP_DAY = stringPreferencesKey("skip_day")
+        private val PINNED_DAY = stringPreferencesKey("pinned_day")
 
         private fun checkInJson(c: CheckIn): String = JSONObject().apply {
             c.feeling?.let { put("feeling", it.name) }

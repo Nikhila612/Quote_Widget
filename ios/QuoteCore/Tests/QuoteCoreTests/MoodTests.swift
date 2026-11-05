@@ -66,3 +66,30 @@ final class MoodTests: XCTestCase {
         XCTAssertTrue(store.needsCheckIn(on: tomorrow))
     }
 }
+
+final class ShowTodayTests: XCTestCase {
+    func testOwnQuoteCanBeShownTodayAndCheckInReplacesIt() throws {
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: "ShowToday"))
+        defaults.removePersistentDomain(forName: "ShowToday")
+        let tags = MoodPicker.tags
+        let quotes = (0..<30).map { Quote(id: "q\($0)", text: "Quote \($0)", author: "A", tags: [tags[$0 % tags.count]]) }
+        let store = QuoteStore(quotes: quotes, defaults: defaults)
+        let mine = try XCTUnwrap(store.saveCustomQuote(text: "I can do this.", author: ""))
+
+        store.showToday(mine)
+        XCTAssertEqual(store.quote(), mine)
+        XCTAssertEqual(store.shownTodayID(), mine.id)
+        XCTAssertFalse(store.isMoodPick())
+
+        // A check-in later today replaces it.
+        let picked = store.checkIn(CheckIn(feeling: .calm))
+        XCTAssertNotEqual(picked, mine)
+        XCTAssertNil(store.shownTodayID())
+        XCTAssertTrue(store.isMoodPick())
+
+        // Deleting a quote that is on today's widget takes it off.
+        store.showToday(mine)
+        store.deleteCustomQuote(id: mine.id)
+        XCTAssertNotEqual(store.quote().id, mine.id)
+    }
+}

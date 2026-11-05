@@ -141,11 +141,17 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("Widget style") {
-                    Picker("Theme", selection: Binding(get: { model.theme }, set: { model.setTheme($0) })) {
-                        ForEach(WidgetTheme.allCases) { Text($0.title).tag($0) }
+                Section {
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 88), spacing: 14)], spacing: 16) {
+                        ForEach(WidgetTheme.allCases) { theme in
+                            ThemeSwatch(theme: theme, isSelected: model.theme == theme) { model.setTheme(theme) }
+                        }
                     }
-                    .pickerStyle(.segmented)
+                    .padding(.vertical, 8)
+                } header: {
+                    Text("Widget style")
+                } footer: {
+                    Text("Pick the one that suits your wallpaper. On iOS 18 tinted or clear home screens, Sunnote follows your home screen's look automatically.")
                 }
                 Section {
                     Text("A new quote appears every day at midnight. Add the widget from your Home Screen: touch and hold, tap Edit, then Add Widget.")
@@ -154,6 +160,30 @@ struct SettingsView: View {
             }
             .navigationTitle("Settings")
         }
+    }
+}
+
+/// A small preview of a widget style: its gradient with "Aa" in its text colour.
+struct ThemeSwatch: View {
+    let theme: WidgetTheme
+    let isSelected: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            VStack(spacing: 6) {
+                RoundedRectangle(cornerRadius: 14)
+                    .fill(theme.background)
+                    .frame(height: 64)
+                    .overlay(Text("Aa").font(.system(.title3, design: .serif)).foregroundStyle(theme.foreground))
+                    .overlay(RoundedRectangle(cornerRadius: 14)
+                        .stroke(isSelected ? Color.accentColor : Color.primary.opacity(0.12), lineWidth: isSelected ? 3 : 1))
+                Text(theme.title).font(.caption.weight(isSelected ? .semibold : .regular))
+            }
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("\(theme.title) style")
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 }
 

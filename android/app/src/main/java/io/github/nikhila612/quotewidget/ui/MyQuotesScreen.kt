@@ -50,7 +50,9 @@ private sealed interface EditTarget {
 @Composable
 fun MyQuotesScreen(
     quotes: List<Quote>,
-    onSave: (text: String, author: String, existing: Quote?) -> Unit,
+    shownTodayId: String?,
+    onSave: (text: String, author: String, existing: Quote?, showToday: Boolean) -> Unit,
+    onShowToday: (Quote) -> Unit,
     onDelete: (Quote) -> Unit,
 ) {
     var editing by rememberSaveable(stateSaver = EditTargetSaver) { mutableStateOf<EditTarget?>(null) }
@@ -75,7 +77,7 @@ fun MyQuotesScreen(
                 LazyColumn(Modifier.fillMaxSize()) {
                     item {
                         Text(
-                            "One of your quotes appears in the widget once a week, taking turns.",
+                            "Tap Show today to put a quote on your widget now. Your quotes also take turns once a week.",
                             Modifier.padding(horizontal = 20.dp, vertical = 8.dp),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -92,6 +94,13 @@ fun MyQuotesScreen(
                                 Text(quote.text, style = MaterialTheme.typography.bodyLarge.copy(fontFamily = FontFamily.Serif))
                                 Text("— ${quote.author}", style = MaterialTheme.typography.labelMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                if (quote.id == shownTodayId) {
+                                    Text("On today's widget", style = MaterialTheme.typography.labelMedium,
+                                        color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(top = 4.dp))
+                                }
+                            }
+                            if (quote.id != shownTodayId) {
+                                androidx.compose.material3.OutlinedButton(onClick = { onShowToday(quote) }) { Text("Show today") }
                             }
                             IconButton(onClick = { onDelete(quote) }) {
                                 Icon(Icons.Filled.Delete, contentDescription = "Delete quote")
@@ -117,8 +126,9 @@ fun MyQuotesScreen(
         QuoteEditorDialog(
             existing = existing,
             onDismiss = { editing = null },
-            onSave = { text, author ->
-                onSave(text, author, existing)
+            showTodayInitially = existing == null || existing.id == shownTodayId,
+            onSave = { text, author, showToday ->
+                onSave(text, author, existing, showToday)
                 editing = null
             },
         )
@@ -126,7 +136,13 @@ fun MyQuotesScreen(
 }
 
 @Composable
-private fun QuoteEditorDialog(existing: Quote?, onDismiss: () -> Unit, onSave: (String, String) -> Unit) {
+private fun QuoteEditorDialog(
+    existing: Quote?,
+    showTodayInitially: Boolean,
+    onDismiss: () -> Unit,
+    onSave: (String, String, Boolean) -> Unit,
+) {
+    var showToday by rememberSaveable { mutableStateOf(showTodayInitially) }
     var text by rememberSaveable { mutableStateOf(existing?.text ?: "") }
     var author by rememberSaveable {
         mutableStateOf(existing?.author?.takeIf { it != QuoteRepository.DEFAULT_CUSTOM_AUTHOR } ?: "")
@@ -156,10 +172,14 @@ private fun QuoteEditorDialog(existing: Quote?, onDismiss: () -> Unit, onSave: (
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words),
                 )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    androidx.compose.material3.Checkbox(checked = showToday, onCheckedChange = { showToday = it })
+                    Text("Show it in today's widget")
+                }
             }
         },
         confirmButton = {
-            TextButton(onClick = { onSave(text, author) }, enabled = text.isNotBlank()) { Text("Save") }
+            TextButton(onClick = { onSave(text, author, showToday) }, enabled = text.isNotBlank()) { Text("Save") }
         },
         dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel") } },
     )

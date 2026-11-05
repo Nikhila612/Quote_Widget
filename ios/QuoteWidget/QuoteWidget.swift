@@ -46,7 +46,7 @@ struct QuoteProvider: TimelineProvider {
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: .now)
 
-        var entries = [QuoteEntry(date: .now, quote: store.quote(), theme: store.theme, feeling: store.checkIn()?.feeling)]
+        var entries = [QuoteEntry(date: .now, quote: store.quote(), theme: store.theme, feeling: store.isMoodPick() ? store.checkIn()?.feeling : nil)]
         for offset in 1...7 {
             guard let midnight = calendar.date(byAdding: .day, value: offset, to: today) else { continue }
             entries.append(QuoteEntry(date: midnight, quote: store.quote(for: midnight), theme: store.theme))
@@ -57,7 +57,12 @@ struct QuoteProvider: TimelineProvider {
 
 struct QuoteWidgetView: View {
     @Environment(\.widgetFamily) private var family
+    @Environment(\.widgetRenderingMode) private var renderingMode
     let entry: QuoteEntry
+
+    /// Full colour normally; on tinted or clear home screens (iOS 18) the system tints the widget,
+    /// so text uses the primary style and the quote is marked accentable.
+    private var ink: Color { renderingMode == .fullColor ? entry.theme.foreground : .primary }
 
     /// The moods offered on the large widget (the app's check-in has all six).
     static let widgetMoods: [Feeling] = [.happy, .calm, .tired, .worried]
@@ -68,6 +73,7 @@ struct QuoteWidgetView: View {
                 Text("\u{201C}\(entry.quote.text)\u{201D}")
                     .font(.system(quoteSize, design: .serif))
                     .minimumScaleFactor(0.5)
+                    .widgetAccentable()
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
 
                 if family != .systemSmall {
@@ -90,7 +96,7 @@ struct QuoteWidgetView: View {
                 .opacity(0.65)
             }
         }
-        .foregroundStyle(entry.theme.foreground)
+        .foregroundStyle(ink)
         .containerBackground(for: .widget) { entry.theme.background }
         .widgetURL(URL(string: "quotewidget://today"))
     }
@@ -108,7 +114,7 @@ struct QuoteWidgetView: View {
                             .lineLimit(1)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 6)
-                            .background(entry.theme.foreground.opacity(isOn ? 0.22 : 0.08), in: Capsule())
+                            .background(ink.opacity(isOn ? 0.22 : 0.08), in: Capsule())
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel("I feel \(mood.title.lowercased())")

@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
+import androidx.glance.GlanceTheme
 import androidx.glance.ImageProvider
 import androidx.glance.LocalSize
 import androidx.glance.action.clickable
@@ -61,7 +62,7 @@ class QuoteGlanceWidget : GlanceAppWidget() {
         val repository = QuoteRepository(context)
         val initialQuote = repository.quoteFor()
         val initialTheme = repository.currentTheme()
-        val initialFeeling = repository.checkInFor()?.feeling
+        val initialFeeling = if (repository.isMoodPick()) repository.checkInFor()?.feeling else null
         provideContent {
             // Keep watching settings: a Glance session can outlive the first draw,
             // so a theme change or a new quote of the user's must update it in place.
@@ -71,9 +72,9 @@ class QuoteGlanceWidget : GlanceAppWidget() {
             var feeling by remember { mutableStateOf(initialFeeling) }
             LaunchedEffect(pickInputs) {
                 quote = repository.quoteFor()
-                feeling = repository.checkInFor()?.feeling
+                feeling = if (repository.isMoodPick()) repository.checkInFor()?.feeling else null
             }
-            QuoteWidgetContent(quote, theme, feeling)
+            GlanceTheme { QuoteWidgetContent(quote, theme, feeling) }
         }
     }
 
@@ -92,7 +93,8 @@ private fun QuoteWidgetContent(quote: Quote, theme: WidgetTheme, feeling: Feelin
     val size = LocalSize.current
     val isLarge = size.height >= QuoteGlanceWidget.LARGE.height
     val showAuthor = size.width >= QuoteGlanceWidget.MEDIUM.width || isLarge
-    val ink = ColorProvider(theme.ink)
+    val palette = widgetPalette(theme)
+    val ink = palette.ink
     val quoteSize = when {
         isLarge -> if (quote.text.length > 110) 18.sp else 21.sp
         size.width >= QuoteGlanceWidget.MEDIUM.width -> if (quote.text.length > 90) 15.sp else 18.sp
@@ -102,7 +104,7 @@ private fun QuoteWidgetContent(quote: Quote, theme: WidgetTheme, feeling: Feelin
     Column(
         modifier = GlanceModifier
             .fillMaxSize()
-            .background(ImageProvider(theme.backgroundRes))
+            .then(palette.background)
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -139,7 +141,7 @@ private fun QuoteWidgetContent(quote: Quote, theme: WidgetTheme, feeling: Feelin
                             .defaultWeight()
                             .height(30.dp)
                             .cornerRadius(15.dp)
-                            .background(ColorProvider(theme.ink.copy(alpha = if (isOn) 0.22f else 0.08f)))
+                            .background(if (isOn) palette.chipOn else palette.chipOff)
                             .clickable(actionRunCallback<MoodAction>(actionParametersOf(MoodAction.MOOD to mood.name)))
                             .semantics { contentDescription = "I feel ${mood.title.lowercase()}" },
                         contentAlignment = Alignment.Center,
@@ -147,7 +149,7 @@ private fun QuoteWidgetContent(quote: Quote, theme: WidgetTheme, feeling: Feelin
                         Text(
                             mood.title,
                             style = TextStyle(
-                                color = ink, fontSize = 12.sp,
+                                color = if (isOn) palette.chipOnText else ink, fontSize = 12.sp,
                                 fontWeight = if (isOn) FontWeight.Bold else FontWeight.Normal,
                             ),
                             maxLines = 1,
@@ -173,18 +175,61 @@ class MoodAction : ActionCallback {
     }
 }
 
-private val WidgetTheme.backgroundRes: Int
-    get() = when (this) {
-        WidgetTheme.SUNRISE -> R.drawable.widget_bg_sunrise
-        WidgetTheme.LIGHT -> R.drawable.widget_bg_light
-        WidgetTheme.DARK -> R.drawable.widget_bg_dark
+/** What the widget draws with: a gradient drawable, or for Wallpaper the system's dynamic colours. */
+private class WidgetPalette(
+    val background: GlanceModifier,
+    val ink: ColorProvider,
+    val chipOff: ColorProvider,
+    val chipOn: ColorProvider,
+    val chipOnText: ColorProvider,
+)
+
+@Composable
+private fun widgetPalette(theme: WidgetTheme): WidgetPalette =
+    if (theme == WidgetTheme.WALLPAPER) {
+        val c = GlanceTheme.colors
+        WidgetPalette(
+            background = GlanceModifier.background(c.primaryContainer).cornerRadius(24.dp),
+            ink = c.onPrimaryContainer,
+            chipOff = c.surface,
+            chipOn = c.primary,
+            chipOnText = c.onPrimary,
+        )
+    } else {
+        WidgetPalette(
+            background = GlanceModifier.background(ImageProvider(theme.backgroundRes)),
+            ink = ColorProvider(theme.ink),
+            chipOff = ColorProvider(theme.ink.copy(alpha = 0.08f)),
+            chipOn = ColorProvider(theme.ink.copy(alpha = 0.22f)),
+            chipOnText = ColorProvider(theme.ink),
+        )
     }
 
+private val WidgetTheme.backgroundRes: Int
+    get() = when (this) {
+        WidgetTheme.SUNRISE, WidgetTheme.WALLPAPER -> R.drawable.widget_bg_sunrise
+        WidgetTheme.LIGHT -> R.drawable.widget_bg_light
+        WidgetTheme.DARK -> R.drawable.widget_bg_dark
+        WidgetTheme.OCEAN -> R.drawable.widget_bg_ocean
+        WidgetTheme.FOREST -> R.drawable.widget_bg_forest
+        WidgetTheme.LAVENDER -> R.drawable.widget_bg_lavender
+        WidgetTheme.ROSE -> R.drawable.widget_bg_rose
+        WidgetTheme.SAND -> R.drawable.widget_bg_sand
+        WidgetTheme.MIDNIGHT -> R.drawable.widget_bg_midnight
+    }
+
+/** Text colour for each gradient style (Wallpaper uses the dynamic scheme instead). */
 val WidgetTheme.ink: Color
     get() = when (this) {
-        WidgetTheme.SUNRISE -> Color(0xFF3B1F29)
+        WidgetTheme.SUNRISE, WidgetTheme.WALLPAPER -> Color(0xFF3B1F29)
         WidgetTheme.LIGHT -> Color(0xFF1F1F1F)
         WidgetTheme.DARK -> Color(0xFFF5F5F5)
+        WidgetTheme.OCEAN -> Color(0xFF0F2942)
+        WidgetTheme.FOREST -> Color(0xFF1F3324)
+        WidgetTheme.LAVENDER -> Color(0xFF291F4A)
+        WidgetTheme.ROSE -> Color(0xFF4A1730)
+        WidgetTheme.SAND -> Color(0xFF3D2B17)
+        WidgetTheme.MIDNIGHT -> Color(0xFFF2F2FF)
     }
 
 class QuoteWidgetReceiver : GlanceAppWidgetReceiver() {

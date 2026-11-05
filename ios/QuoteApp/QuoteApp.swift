@@ -38,14 +38,28 @@ final class QuoteModel {
         theme = store.theme
         customQuotes = store.customQuotes
         checkIn = store.checkIn()
+        shownTodayID = store.shownTodayID()
     }
 
+    private(set) var shownTodayID: String?
+
     /// The tag today's quote was picked for, when a check-in chose it.
-    var moodTag: String? { checkIn.flatMap { MoodPicker.tag(for: $0) } }
+    var moodTag: String? {
+        shownTodayID == nil ? checkIn.flatMap { MoodPicker.tag(for: $0) } : nil
+    }
+
+    /// Puts one of the user's own quotes on today's widget.
+    func showToday(_ quote: Quote) {
+        store.showToday(quote)
+        today = quote
+        shownTodayID = quote.id
+        WidgetCenter.shared.reloadAllTimelines()
+    }
 
     func submitCheckIn(_ answers: CheckIn) {
         today = store.checkIn(answers)
         checkIn = answers
+        shownTodayID = nil
         showCheckIn = false
         WidgetCenter.shared.reloadAllTimelines()
     }
@@ -63,8 +77,9 @@ final class QuoteModel {
 
     /// Adds a new quote, or updates `existing`. Returns false when the text is empty.
     @discardableResult
-    func saveCustomQuote(text: String, author: String, existing: Quote? = nil) -> Bool {
-        guard store.saveCustomQuote(text: text, author: author, id: existing?.id) != nil else { return false }
+    func saveCustomQuote(text: String, author: String, existing: Quote? = nil, showToday: Bool = false) -> Bool {
+        guard let saved = store.saveCustomQuote(text: text, author: author, id: existing?.id) else { return false }
+        if showToday || saved.id == shownTodayID { store.showToday(saved) }
         customQuotesChanged()
         return true
     }
@@ -98,6 +113,7 @@ final class QuoteModel {
     func refresh() {
         today = store.quote()
         checkIn = store.checkIn()
+        shownTodayID = store.shownTodayID()
         WidgetCenter.shared.reloadAllTimelines()
     }
 }
