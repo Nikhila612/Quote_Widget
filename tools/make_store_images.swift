@@ -1,7 +1,7 @@
 // Builds Sunnote's store images from raw simulator/emulator screenshots.
 // Usage: swift tools/make_store_images.swift <raw-screenshots-dir> <output-dir>
-// Expects in the raw dir: ios-{home,checkin,today,myquotes,favourites}.png, ios-home-{light,dark}.png,
-// and-{home,checkin,today,myquotes,favourites}.png, and-home-{light,dark}.png, and the icon at
+// Expects in the raw dir: ios-{home,checkin,today,settings,myquotes,favourites}.png,
+// and-{home,checkin,today,settings,myquotes,favourites}.png, and the icon at
 // ios/QuoteApp/Assets.xcassets/AppIcon.appiconset/AppIcon.png (run from the repo root).
 import AppKit
 import CoreGraphics
@@ -81,44 +81,13 @@ func screen(_ raw: String, _ text: String, w: Int, h: Int, out: String) {
     save(ctx, out)
 }
 
-/// Crops a pixel rect given from the image's top-left.
-func crop(_ img: CGImage, x: Int, y: Int, w: Int, h: Int) -> CGImage {
-    img.cropping(to: CGRect(x: x, y: y, width: w, height: h))!
-}
-
-/// Three widget crops (sunrise, light, dark) stacked under a caption, each with its label above it.
-func styles(_ crops: [CGImage], _ text: String, w: Int, h: Int, widthFraction: CGFloat, out: String) {
-    let ctx = canvas(w, h)
-    caption(ctx, text, width: w, height: h, top: CGFloat(h) * 0.055, size: CGFloat(w) * 0.07)
-    let labels = ["Sunrise", "Light", "Dark"]
-    let labelSize = CGFloat(w) * 0.045
-    let font = CTFontCreateWithName("Georgia" as CFString, labelSize, nil)
-    let cw = CGFloat(w) * widthFraction
-    let ch = cw * CGFloat(crops[0].height) / CGFloat(crops[0].width)
-    let top = CGFloat(h) * 0.82, bottom = CGFloat(h) * 0.04       // region below the caption
-    let block = labelSize * 1.9 + ch                                // label + card
-    let gap = max(0, (top - bottom - 3 * block) / 2)
-    for (i, img) in crops.enumerated() {
-        let blockTop = top - CGFloat(i) * (block + gap)
-        let line = CTLineCreateWithAttributedString(NSAttributedString(string: labels[i], attributes: [
-            .font: font, .foregroundColor: NSColor(cgColor: ink)!]))
-        let lw = CTLineGetTypographicBounds(line, nil, nil, nil)
-        ctx.textPosition = CGPoint(x: (CGFloat(w) - CGFloat(lw)) / 2, y: blockTop - labelSize)
-        CTLineDraw(line, ctx)
-        let rect = CGRect(x: (CGFloat(w) - cw) / 2, y: blockTop - block, width: cw, height: ch)
-        place(ctx, img, in: rect, radius: min(cw, ch) * 0.1)
-    }
-    save(ctx, out)
-}
-
 // ---- iPhone 6.9-inch: 1320 x 2868 ----
 let iw = 1320, ih = 2868
 screen("ios-home.png", "A happy little quote, every day", w: iw, h: ih, out: "ios/1-home.png")
 screen("ios-checkin.png", "Tell it how you feel today", w: iw, h: ih, out: "ios/2-check-in.png")
 screen("ios-today.png", "A quote picked for your day", w: iw, h: ih, out: "ios/3-today.png")
-let iSmall = ["ios-home.png", "ios-home-light.png", "ios-home-dark.png"].map { crop(load($0), x: 104, y: 295, w: 510, h: 510) }
-styles(iSmall, "Sunrise, Light or Dark", w: iw, h: ih, widthFraction: 0.40, out: "ios/4-styles.png")
-screen("ios-myquotes.png", "Add your own words", w: iw, h: ih, out: "ios/5-my-quotes.png")
+screen("ios-settings.png", "A style for every wallpaper", w: iw, h: ih, out: "ios/4-styles.png")
+screen("ios-myquotes.png", "Put your own words on today's widget", w: iw, h: ih, out: "ios/5-my-quotes.png")
 screen("ios-favourites.png", "Keep the ones you love", w: iw, h: ih, out: "ios/6-favourites.png")
 
 // ---- Google Play phone: 1080 x 1920 (Play allows at most 2:1) ----
@@ -126,9 +95,8 @@ let aw = 1080, ah = 1920
 screen("and-home.png", "A happy little quote, every day", w: aw, h: ah, out: "android/1-home.png")
 screen("and-checkin.png", "Tell it how you feel today", w: aw, h: ah, out: "android/2-check-in.png")
 screen("and-today.png", "A quote picked for your day", w: aw, h: ah, out: "android/3-today.png")
-let aLarge = ["and-home.png", "and-home-light.png", "and-home-dark.png"].map { crop(load($0), x: 60, y: 398, w: 960, h: 822) }
-styles(aLarge, "Sunrise, Light or Dark", w: aw, h: ah, widthFraction: 0.40, out: "android/4-styles.png")
-screen("and-myquotes.png", "Add your own words", w: aw, h: ah, out: "android/5-my-quotes.png")
+screen("and-settings.png", "A style for every wallpaper", w: aw, h: ah, out: "android/4-styles.png")
+screen("and-myquotes.png", "Put your own words on today's widget", w: aw, h: ah, out: "android/5-my-quotes.png")
 screen("and-favourites.png", "Keep the ones you love", w: aw, h: ah, out: "android/6-favourites.png")
 
 // ---- Google Play feature graphic 1024 x 500 and 512 px icon ----
