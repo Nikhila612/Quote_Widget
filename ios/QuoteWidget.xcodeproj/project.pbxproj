@@ -18,6 +18,7 @@
 		ADC3202991F57597D0C826C8 /* QuoteWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = F8DDF8ED47CF2A32FB9982DF /* QuoteWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		AF6E4BE858780BF134C70B48 /* quotes.json in Resources */ = {isa = PBXBuildFile; fileRef = 2788327AD3013F12B8AF8682 /* quotes.json */; };
 		B84BC8C5086B2125A32829CA /* QuoteApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85F4257EDD57CA62B642A49D /* QuoteApp.swift */; };
+		BA3BC7363537A73C53EF1831 /* QuoteCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DC98587226C5D234F1E2BDE /* QuoteCard.swift */; };
 		BB43B4A592720B83FF6BF5C8 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A10C539ED2CB7F939D8333F /* Theme.swift */; };
 		C940CE100B39655F1D5E55D7 /* QuoteCore in Frameworks */ = {isa = PBXBuildFile; productRef = 2875E1258DA5C51F5271185E /* QuoteCore */; };
 		EE2A3CDACAED495A439F73FD /* QuoteCore in Frameworks */ = {isa = PBXBuildFile; productRef = 732B650E47FCD00FD8CDE7D8 /* QuoteCore */; };
@@ -59,6 +60,7 @@
 		45D5A2B113597773F185D876 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		652AF08E7395D0FADBA01EF7 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		85F4257EDD57CA62B642A49D /* QuoteApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuoteApp.swift; sourceTree = "<group>"; };
+		8DC98587226C5D234F1E2BDE /* QuoteCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuoteCard.swift; sourceTree = "<group>"; };
 		A8860C0AB72EF38570BBABA8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		AB7AC650EABF35E967D472D5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		C9F7EC24EA2BFC7E68F750D9 /* QuoteApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = QuoteApp.entitlements; sourceTree = "<group>"; };
@@ -109,6 +111,7 @@
 				DD70325F7BAE4B52D8453D8A /* MyQuotesView.swift */,
 				C9F7EC24EA2BFC7E68F750D9 /* QuoteApp.entitlements */,
 				85F4257EDD57CA62B642A49D /* QuoteApp.swift */,
+				8DC98587226C5D234F1E2BDE /* QuoteCard.swift */,
 				1F4495CE22256CA403529CF8 /* RootView.swift */,
 			);
 			path = QuoteApp;
@@ -302,6 +305,7 @@
 				5CB49C1435341CE822BDC158 /* CheckInView.swift in Sources */,
 				00186CACF688EC920FAC380B /* MyQuotesView.swift in Sources */,
 				B84BC8C5086B2125A32829CA /* QuoteApp.swift in Sources */,
+				BA3BC7363537A73C53EF1831 /* QuoteCard.swift in Sources */,
 				0CE5C986C6FDAB9387F79D36 /* RootView.swift in Sources */,
 				BB43B4A592720B83FF6BF5C8 /* Theme.swift in Sources */,
 			);
