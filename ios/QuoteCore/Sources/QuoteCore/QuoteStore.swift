@@ -18,6 +18,11 @@ public final class QuoteStore {
         static let favourites = "favourites"
         static let theme = "theme"
         static let customQuotes = "customQuotes"
+        static let moodPicks = "moodPicks"        // [yyyy-MM-dd: quote id] chosen by a check-in
+        static let tagUses = "tagUses"            // [tag: positions used in that tag's rotation]
+        static let checkInDay = "checkInDay"      // yyyy-MM-dd of the last check-in
+        static let checkInAnswers = "checkInAnswers"
+        static let skipDay = "skipDay"            // yyyy-MM-dd the check-in was skipped
     }
 
     private let defaults: UserDefaults
@@ -44,6 +49,7 @@ public final class QuoteStore {
     }
 
     public func quote(for date: Date = .now) -> Quote {
+        if let id = moodPicks[dayKey(date)], let picked = quote(withID: id) { return picked }
         let custom = customQuotes
         let pick = QuotePicker.dailyPick(
             dayIndex: dayIndex(for: date), libraryCount: quotes.count, customCount: custom.count, seed: seed)
@@ -61,6 +67,74 @@ public final class QuoteStore {
             guard let day = calendar.date(byAdding: .day, value: -offset, to: today) else { return nil }
             return (day, quote(for: day))
         }
+    }
+
+    // MARK: Daily check-in
+
+    /// True until the user checks in or skips today.
+    public func needsCheckIn(on date: Date = .now) -> Bool {
+        let key = dayKey(date)
+        return defaults.string(forKey: Key.checkInDay) != key && defaults.string(forKey: Key.skipDay) != key
+    }
+
+    public func skipCheckIn(on date: Date = .now) {
+        defaults.set(dayKey(date), forKey: Key.skipDay)
+    }
+
+    /// Today's answers, if the user has checked in today.
+    public func checkIn(on date: Date = .now) -> CheckIn? {
+        guard defaults.string(forKey: Key.checkInDay) == dayKey(date),
+              let data = defaults.data(forKey: Key.checkInAnswers) else { return nil }
+        return try? JSONDecoder().decode(CheckIn.self, from: data)
+    }
+
+    /// Records the answers and picks today's quote to match them. Returns today's quote.
+    @discardableResult
+    public func checkIn(_ answers: CheckIn, on date: Date = .now) -> Quote {
+        let key = dayKey(date)
+        defaults.set(key, forKey: Key.checkInDay)
+        defaults.set(try? JSONEncoder().encode(answers), forKey: Key.checkInAnswers)
+        var picks = moodPicks
+        picks[key] = nil
+        guard let tag = MoodPicker.tag(for: answers) else {
+            moodPicks = picks
+            return quote(for: date)
+        }
+        let candidates = quotes.indices.filter { quotes[$0].tags.contains(tag) }
+        var avoid = Set<Int>()
+        for offset in 1...30 {
+            guard let day = calendar.date(byAdding: .day, value: -offset, to: date) else { continue }
+            let shown = quote(for: day)
+            if let index = quotes.firstIndex(of: shown) { avoid.insert(index) }
+        }
+        var uses = tagUses
+        guard let choice = MoodPicker.pick(candidates: candidates, tag: tag, seed: seed,
+                                           uses: uses[tag] ?? 0, avoid: avoid) else { return quote(for: date) }
+        uses[tag] = (uses[tag] ?? 0) + choice.consumed
+        tagUses = uses
+        picks[key] = quotes[choice.index].id
+        moodPicks = picks.filter { $0.key >= dayKey(calendar.date(byAdding: .day, value: -60, to: date) ?? date) }
+        return quotes[choice.index]
+    }
+
+    private var moodPicks: [String: String] {
+        get { defaults.dictionary(forKey: Key.moodPicks) as? [String: String] ?? [:] }
+        set { defaults.set(newValue, forKey: Key.moodPicks) }
+    }
+
+    private var tagUses: [String: Int] {
+        get { defaults.dictionary(forKey: Key.tagUses) as? [String: Int] ?? [:] }
+        set { defaults.set(newValue, forKey: Key.tagUses) }
+    }
+
+    private func quote(withID id: String) -> Quote? {
+        quotes.first { $0.id == id } ?? customQuotes.first { $0.id == id }
+    }
+
+    /// yyyy-MM-dd in the user's calendar; sorts in date order.
+    private func dayKey(_ date: Date) -> String {
+        let c = calendar.dateComponents([.year, .month, .day], from: date)
+        return String(format: "%04d-%02d-%02d", c.year ?? 0, c.month ?? 0, c.day ?? 0)
     }
 
     // MARK: The user's own quotes

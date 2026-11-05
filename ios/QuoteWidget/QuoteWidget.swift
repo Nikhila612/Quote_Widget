@@ -1,3 +1,4 @@
+import AppIntents
 import SwiftUI
 import WidgetKit
 import QuoteCore
@@ -6,6 +7,24 @@ struct QuoteEntry: TimelineEntry {
     let date: Date
     let quote: Quote
     let theme: WidgetTheme
+    var feeling: Feeling? = nil   // today's check-in mood, for highlighting the widget's mood buttons
+}
+
+/// Tapping a mood on the large widget: re-picks today's quote for that mood (iOS 17 interactive widget).
+struct MoodIntent: AppIntent {
+    static let title: LocalizedStringResource = "Set today's mood"
+
+    @Parameter(title: "Mood") var mood: String
+
+    init() {}
+    init(_ feeling: Feeling) { mood = feeling.rawValue }
+
+    func perform() async throws -> some IntentResult {
+        // A widget tap means "this is how I feel now", so it replaces the morning's answers.
+        let store = QuoteStore(quotes: QuoteLibrary.load())
+        store.checkIn(CheckIn(feeling: Feeling(rawValue: mood)))
+        return .result()
+    }
 }
 
 struct QuoteProvider: TimelineProvider {
@@ -27,7 +46,7 @@ struct QuoteProvider: TimelineProvider {
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: .now)
 
-        var entries = [QuoteEntry(date: .now, quote: store.quote(), theme: store.theme)]
+        var entries = [QuoteEntry(date: .now, quote: store.quote(), theme: store.theme, feeling: store.checkIn()?.feeling)]
         for offset in 1...7 {
             guard let midnight = calendar.date(byAdding: .day, value: offset, to: today) else { continue }
             entries.append(QuoteEntry(date: midnight, quote: store.quote(for: midnight), theme: store.theme))
@@ -40,21 +59,30 @@ struct QuoteWidgetView: View {
     @Environment(\.widgetFamily) private var family
     let entry: QuoteEntry
 
+    /// The moods offered on the large widget (the app's check-in has all six).
+    static let widgetMoods: [Feeling] = [.happy, .calm, .tired, .worried]
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("\u{201C}\(entry.quote.text)\u{201D}")
-                .font(.system(quoteSize, design: .serif))
-                .minimumScaleFactor(0.5)
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+            VStack(alignment: .leading, spacing: 8) {
+                Text("\u{201C}\(entry.quote.text)\u{201D}")
+                    .font(.system(quoteSize, design: .serif))
+                    .minimumScaleFactor(0.5)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
 
-            if family != .systemSmall {
-                Text("— \(entry.quote.author)")
-                    .font(.caption.weight(.medium))
-                    .opacity(0.8)
+                if family != .systemSmall {
+                    Text("— \(entry.quote.author)")
+                        .font(.caption.weight(.medium))
+                        .opacity(0.8)
+                }
             }
-            if family == .systemLarge, let tag = entry.quote.tags.first {
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Today's quote: \(entry.quote.text), by \(entry.quote.author)")
+
+            if family == .systemLarge {
+                moodButtons
                 HStack {
-                    Text(tag.capitalized)
+                    Text(entry.quote.tags.first?.capitalized ?? "")
                     Spacer()
                     Text(entry.date, format: .dateTime.weekday(.wide).day().month())
                 }
@@ -65,8 +93,29 @@ struct QuoteWidgetView: View {
         .foregroundStyle(entry.theme.foreground)
         .containerBackground(for: .widget) { entry.theme.background }
         .widgetURL(URL(string: "quotewidget://today"))
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel("Today's quote: \(entry.quote.text), by \(entry.quote.author)")
+    }
+
+    /// "How are you?" with four tappable moods; the current one is filled in.
+    private var moodButtons: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("How are you?").font(.caption2.weight(.semibold)).opacity(0.7)
+            HStack(spacing: 6) {
+                ForEach(Self.widgetMoods) { mood in
+                    let isOn = entry.feeling == mood
+                    Button(intent: MoodIntent(mood)) {
+                        Text(mood.title)
+                            .font(.caption.weight(isOn ? .semibold : .regular))
+                            .lineLimit(1)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 6)
+                            .background(entry.theme.foreground.opacity(isOn ? 0.22 : 0.08), in: Capsule())
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("I feel \(mood.title.lowercased())")
+                    .accessibilityAddTraits(isOn ? .isSelected : [])
+                }
+            }
+        }
     }
 
     private var quoteSize: Font.TextStyle {

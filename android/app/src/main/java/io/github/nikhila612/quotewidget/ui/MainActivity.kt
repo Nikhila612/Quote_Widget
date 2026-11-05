@@ -27,6 +27,7 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -47,6 +48,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
@@ -63,6 +65,8 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.glance.appwidget.updateAll
+import io.github.nikhila612.quotewidget.core.CheckIn
+import io.github.nikhila612.quotewidget.core.MoodPicker
 import io.github.nikhila612.quotewidget.core.Quote
 import io.github.nikhila612.quotewidget.data.QuoteRepository
 import io.github.nikhila612.quotewidget.data.WidgetTheme
@@ -74,11 +78,18 @@ import java.time.format.DateTimeFormatter
 import android.os.Build
 
 class MainActivity : ComponentActivity() {
+    private val resumes = androidx.compose.runtime.mutableIntStateOf(0)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         val repository = QuoteRepository(this)
-        setContent { QuoteAppTheme { QuoteApp(repository) } }
+        setContent { QuoteAppTheme { QuoteApp(repository, resumes.intValue) } }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        resumes.intValue++
     }
 }
 
@@ -104,15 +115,37 @@ private enum class Tab(val label: String, val icon: ImageVector) {
 }
 
 @Composable
-private fun QuoteApp(repository: QuoteRepository) {
+private fun QuoteApp(repository: QuoteRepository, resumes: Int) {
     var tab by rememberSaveable { mutableStateOf(Tab.Today) }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val favourites by repository.favouriteIds.collectAsState(initial = emptySet())
     val theme by repository.theme.collectAsState(initial = WidgetTheme.SUNRISE)
     val customQuotes by repository.customQuotes.collectAsState(initial = emptyList())
-    // Recomputed when the user's own quotes change: today may be one of theirs.
-    val today by produceState<Quote?>(initialValue = null, customQuotes) { value = repository.quoteFor() }
+    val pickInputs by repository.pickInputs.collectAsState(initial = null)
+    // Recomputed when own quotes or a check-in change today's quote.
+    val today by produceState<Quote?>(initialValue = null, pickInputs, resumes) { value = repository.quoteFor() }
+    val checkIn by produceState<CheckIn?>(initialValue = null, pickInputs, resumes) { value = repository.checkInFor() }
+    var showCheckIn by rememberSaveable { mutableStateOf(false) }
+    // Ask once a day, when the app comes to the front.
+    LaunchedEffect(resumes) { if (repository.needsCheckIn()) showCheckIn = true }
+
+    if (showCheckIn) {
+        CheckInSheet(
+            initial = checkIn ?: CheckIn(),
+            onSubmit = { answers ->
+                showCheckIn = false
+                scope.launch {
+                    repository.checkIn(answers)
+                    QuoteGlanceWidget().updateAll(context)
+                }
+            },
+            onSkip = {
+                showCheckIn = false
+                scope.launch { repository.skipCheckIn() }
+            },
+        )
+    }
 
     val toggle: (Quote) -> Unit = { quote -> scope.launch { repository.toggleFavourite(quote.id) } }
     val customChanged: suspend () -> Unit = { QuoteGlanceWidget().updateAll(context) }
@@ -133,7 +166,9 @@ private fun QuoteApp(repository: QuoteRepository) {
     ) { padding ->
         Box(Modifier.padding(padding)) {
             when (tab) {
-                Tab.Today -> today?.let { TodayScreen(it, theme, it.id in favourites, toggle) }
+                Tab.Today -> today?.let {
+                    TodayScreen(it, theme, it.id in favourites, toggle, checkIn?.let { c -> MoodPicker.tag(c) }) { showCheckIn = true }
+                }
                 Tab.MyQuotes -> MyQuotesScreen(
                     quotes = customQuotes,
                     onSave = { text, author, existing ->
@@ -179,7 +214,14 @@ private val WidgetTheme.brush: Brush
     }
 
 @Composable
-private fun TodayScreen(quote: Quote, theme: WidgetTheme, isFavourite: Boolean, onToggle: (Quote) -> Unit) {
+private fun TodayScreen(
+    quote: Quote,
+    theme: WidgetTheme,
+    isFavourite: Boolean,
+    onToggle: (Quote) -> Unit,
+    moodTag: String?,
+    onCheckIn: () -> Unit,
+) {
     val context = LocalContext.current
     Column(
         modifier = Modifier.fillMaxSize().background(theme.brush).padding(32.dp),
@@ -217,6 +259,14 @@ private fun TodayScreen(quote: Quote, theme: WidgetTheme, isFavourite: Boolean, 
                 Icon(Icons.Filled.Share, contentDescription = "Share quote", tint = theme.ink)
             }
         }
+        androidx.compose.material3.AssistChip(
+            onClick = onCheckIn,
+            label = {
+                Text(moodTag?.let { "Picked for you: ${it.replaceFirstChar { c -> c.uppercase() }}" } ?: "How are you today?")
+            },
+            leadingIcon = { Icon(Icons.Filled.Star, contentDescription = null, tint = theme.ink) },
+            colors = androidx.compose.material3.AssistChipDefaults.assistChipColors(labelColor = theme.ink),
+        )
     }
 }
 

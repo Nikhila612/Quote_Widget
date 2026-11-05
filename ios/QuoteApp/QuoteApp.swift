@@ -29,12 +29,36 @@ final class QuoteModel {
     private(set) var favourites: [Quote]
     private(set) var theme: WidgetTheme
     private(set) var customQuotes: [Quote]
+    private(set) var checkIn: CheckIn?
+    var showCheckIn = false
 
     init() {
         today = store.quote()
         favourites = store.favourites
         theme = store.theme
         customQuotes = store.customQuotes
+        checkIn = store.checkIn()
+    }
+
+    /// The tag today's quote was picked for, when a check-in chose it.
+    var moodTag: String? { checkIn.flatMap { MoodPicker.tag(for: $0) } }
+
+    func submitCheckIn(_ answers: CheckIn) {
+        today = store.checkIn(answers)
+        checkIn = answers
+        showCheckIn = false
+        WidgetCenter.shared.reloadAllTimelines()
+    }
+
+    func skipCheckIn() {
+        store.skipCheckIn()
+        showCheckIn = false
+    }
+
+    /// Called when the app comes to the front: refresh, and ask once a day.
+    func becameActive() {
+        refresh()
+        if store.needsCheckIn() { showCheckIn = true }
     }
 
     /// Adds a new quote, or updates `existing`. Returns false when the text is empty.
@@ -73,6 +97,7 @@ final class QuoteModel {
 
     func refresh() {
         today = store.quote()
+        checkIn = store.checkIn()
         WidgetCenter.shared.reloadAllTimelines()
     }
 }

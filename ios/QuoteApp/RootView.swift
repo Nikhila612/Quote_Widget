@@ -25,7 +25,11 @@ struct RootView: View {
                 .tag(AppTab.settings)
         }
         .onChange(of: scenePhase) { _, phase in
-            if phase == .active { model.refresh() }
+            if phase == .active { model.becameActive() }
+        }
+        .onAppear { model.becameActive() }
+        .sheet(isPresented: $model.showCheckIn) {
+            CheckInView(initial: model.checkIn ?? CheckIn())
         }
     }
 }
@@ -61,6 +65,17 @@ struct TodayView: View {
                     }
                 }
                 .padding(.top, 8)
+
+                Button {
+                    model.showCheckIn = true
+                } label: {
+                    Label(model.moodTag.map { "Picked for you: \($0.capitalized)" } ?? "How are you today?",
+                          systemImage: "sparkles")
+                        .font(.subheadline.weight(.medium))
+                        .padding(.horizontal, 14).padding(.vertical, 8)
+                        .background(.white.opacity(0.35), in: Capsule())
+                }
+                .padding(.top, 12)
             }
             .foregroundStyle(model.theme.foreground)
             .padding(32)

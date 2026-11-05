@@ -37,6 +37,9 @@ swift tools/make_store_images.swift docs/store/raw docs/store
 ## Daily pick
 Both platforms use the same rule (`QuotePicker`): days since install pick a position in a per-install shuffled order (SplitMix64 + Fisher–Yates). Both test suites assert the same shuffle vectors, so keep the two implementations in sync.
 
+## Mood check-in
+Once a day the app asks four optional questions (`CheckIn` in `Mood.swift` / `Mood.kt`). `MoodPicker.tag` scores the answers into one of the six quote tags, and `MoodPicker.pick` chooses a quote with that tag from the tag's own shuffled order, skipping anything shown in the last 30 days. The pick is saved per day, so the widget, the app and History all agree. Mood buttons on the large widget (iOS 17 App Intent, Android Glance action) replace the morning's answers with just that feeling. Both test suites assert the same mood vectors.
+
 ## Adding quotes
 Append to `shared/quotes.json` with the next `id`, then check the file:
 

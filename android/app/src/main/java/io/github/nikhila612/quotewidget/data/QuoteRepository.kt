@@ -6,7 +6,13 @@ import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import io.github.nikhila612.quotewidget.core.CheckIn
 import io.github.nikhila612.quotewidget.core.DailyPick
+import io.github.nikhila612.quotewidget.core.DayKind
+import io.github.nikhila612.quotewidget.core.Feeling
+import io.github.nikhila612.quotewidget.core.MoodPicker
+import io.github.nikhila612.quotewidget.core.QuoteKind
+import io.github.nikhila612.quotewidget.core.Wish
 import io.github.nikhila612.quotewidget.core.Quote
 import io.github.nikhila612.quotewidget.core.QuotePicker
 import kotlinx.coroutines.flow.Flow
@@ -31,6 +37,7 @@ class QuoteRepository(context: Context) {
     val quotes: List<Quote> by lazy { loadQuotes(appContext) }
 
     suspend fun quoteFor(date: LocalDate = LocalDate.now()): Quote {
+        moodPicks()[date.toString()]?.let { id -> quoteWithId(id)?.let { return it } }
         val (seed, installDay) = installState()
         val custom = customQuotes.first()
         val dayIndex = date.toEpochDay() - installDay
@@ -39,6 +46,74 @@ class QuoteRepository(context: Context) {
             is DailyPick.Custom -> custom[pick.index]
         }
     }
+
+    // Daily check-in. Picks are stored per day (yyyy-MM-dd -> quote id) so History stays stable.
+
+    /** Changes whenever today's quote could change: own quotes or a check-in. The widget watches it. */
+    val pickInputs: Flow<List<String?>> = store.data.map { prefs ->
+        listOf(prefs[CUSTOM_QUOTES], prefs[MOOD_PICKS], prefs[CHECKIN_DAY], prefs[CHECKIN_ANSWERS])
+    }
+
+    /** True until the user checks in or skips today. */
+    suspend fun needsCheckIn(date: LocalDate = LocalDate.now()): Boolean {
+        val prefs = store.data.first()
+        val key = date.toString()
+        return prefs[CHECKIN_DAY] != key && prefs[SKIP_DAY] != key
+    }
+
+    suspend fun skipCheckIn(date: LocalDate = LocalDate.now()) {
+        store.edit { it[SKIP_DAY] = date.toString() }
+    }
+
+    /** Today's answers, if the user has checked in today. */
+    suspend fun checkInFor(date: LocalDate = LocalDate.now()): CheckIn? {
+        val prefs = store.data.first()
+        if (prefs[CHECKIN_DAY] != date.toString()) return null
+        return prefs[CHECKIN_ANSWERS]?.let { runCatching { parseCheckIn(it) }.getOrNull() }
+    }
+
+    /** Records the answers and picks today's quote to match them. Returns today's quote. */
+    suspend fun checkIn(answers: CheckIn, date: LocalDate = LocalDate.now()): Quote {
+        val key = date.toString()
+        val picks = moodPicks().toMutableMap().apply { remove(key) }
+        val tag = MoodPicker.tag(answers)
+        if (tag == null) {
+            store.edit {
+                it[CHECKIN_DAY] = key
+                it[CHECKIN_ANSWERS] = checkInJson(answers)
+                it[MOOD_PICKS] = JSONObject(picks as Map<*, *>).toString()
+            }
+            return quoteFor(date)
+        }
+        store.edit { it[MOOD_PICKS] = JSONObject(picks as Map<*, *>).toString() }
+        val candidates = quotes.indices.filter { tag in quotes[it].tags }
+        val avoid = (1L..30L).mapNotNull { quotes.indexOf(quoteFor(date.minusDays(it))).takeIf { i -> i >= 0 } }.toSet()
+        val uses = tagUses()
+        val (seed, _) = installState()
+        val choice = MoodPicker.pick(candidates, tag, seed.toULong(), uses[tag] ?: 0, avoid) ?: return quoteFor(date)
+        val oldest = date.minusDays(60).toString()
+        picks[key] = quotes[choice.index].id
+        store.edit {
+            it[CHECKIN_DAY] = key
+            it[CHECKIN_ANSWERS] = checkInJson(answers)
+            it[TAG_USES] = JSONObject((uses + (tag to (uses[tag] ?: 0) + choice.consumed)) as Map<*, *>).toString()
+            it[MOOD_PICKS] = JSONObject(picks.filterKeys { day -> day >= oldest } as Map<*, *>).toString()
+        }
+        return quotes[choice.index]
+    }
+
+    private suspend fun moodPicks(): Map<String, String> =
+        store.data.first()[MOOD_PICKS]?.let { json ->
+            runCatching { JSONObject(json).let { o -> o.keys().asSequence().associateWith { k -> o.getString(k) } } }.getOrNull()
+        } ?: emptyMap()
+
+    private suspend fun tagUses(): Map<String, Int> =
+        store.data.first()[TAG_USES]?.let { json ->
+            runCatching { JSONObject(json).let { o -> o.keys().asSequence().associateWith { k -> o.getInt(k) } } }.getOrNull()
+        } ?: emptyMap()
+
+    private suspend fun quoteWithId(id: String): Quote? =
+        quotes.firstOrNull { it.id == id } ?: customQuotes.first().firstOrNull { it.id == id }
 
     // The user's own quotes, stored on the device as a JSON array.
 
@@ -118,6 +193,28 @@ class QuoteRepository(context: Context) {
         private val FAVOURITES = stringSetPreferencesKey("favourites")
         private val THEME = stringPreferencesKey("theme")
         private val CUSTOM_QUOTES = stringPreferencesKey("custom_quotes")
+        private val MOOD_PICKS = stringPreferencesKey("mood_picks")
+        private val TAG_USES = stringPreferencesKey("tag_uses")
+        private val CHECKIN_DAY = stringPreferencesKey("checkin_day")
+        private val CHECKIN_ANSWERS = stringPreferencesKey("checkin_answers")
+        private val SKIP_DAY = stringPreferencesKey("skip_day")
+
+        private fun checkInJson(c: CheckIn): String = JSONObject().apply {
+            c.feeling?.let { put("feeling", it.name) }
+            c.day?.let { put("day", it.name) }
+            c.wish?.let { put("wish", it.name) }
+            c.kind?.let { put("kind", it.name) }
+        }.toString()
+
+        private fun parseCheckIn(json: String): CheckIn {
+            val o = JSONObject(json)
+            return CheckIn(
+                feeling = o.optString("feeling").takeIf { it.isNotEmpty() }?.let { Feeling.valueOf(it) },
+                day = o.optString("day").takeIf { it.isNotEmpty() }?.let { DayKind.valueOf(it) },
+                wish = o.optString("wish").takeIf { it.isNotEmpty() }?.let { Wish.valueOf(it) },
+                kind = o.optString("kind").takeIf { it.isNotEmpty() }?.let { QuoteKind.valueOf(it) },
+            )
+        }
 
         private fun toJson(quotes: List<Quote>): String = JSONArray().apply {
             quotes.forEach { q ->
