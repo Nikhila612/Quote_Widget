@@ -13,3 +13,6 @@ android/.idea/
 *.iml
 .kotlin/
 tools/.texts/
+
+# iCloud Drive conflict copies (this folder syncs to iCloud)
+* [2-9].*
