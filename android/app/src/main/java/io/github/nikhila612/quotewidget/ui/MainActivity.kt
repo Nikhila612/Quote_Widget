@@ -351,7 +351,7 @@ private fun SettingsScreen(theme: WidgetTheme, onThemeChange: (WidgetTheme) -> U
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Text(
-                "A new quote appears every day at midnight. To add the widget, touch and hold your home screen, tap Widgets, then find Sunnote.",
+                "A new quote appears every day at midnight. To add the widget, touch and hold your home screen, tap Widgets, then find Sunote.",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

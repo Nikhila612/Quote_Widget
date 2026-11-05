@@ -1,4 +1,4 @@
-// Draws the Sunnote app icon (1024x1024 PNG): sunrise gradient with a pair of quote marks.
+// Draws the Sunote app icon (1024x1024 PNG): sunrise gradient with a pair of quote marks.
 // Usage: swift tools/make_icon.swift <output.png>
 import AppKit
 import CoreGraphics

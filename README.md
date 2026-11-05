@@ -1,6 +1,6 @@
-# Sunnote
+# Sunote
 
-Sunnote is a home-screen widget for iOS and Android that shows one uplifting quote per day, changing at local midnight, with no repeats until the whole library has been shown.
+Sunote is a home-screen widget for iOS and Android that shows one uplifting quote per day, changing at local midnight, with no repeats until the whole library has been shown.
 
 ```
 shared/quotes.json   # the quote library, bundled into both apps

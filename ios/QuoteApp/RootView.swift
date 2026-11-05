@@ -151,7 +151,7 @@ struct SettingsView: View {
                 } header: {
                     Text("Widget style")
                 } footer: {
-                    Text("Pick the one that suits your wallpaper. On iOS 18 tinted or clear home screens, Sunnote follows your home screen's look automatically.")
+                    Text("Pick the one that suits your wallpaper. On iOS 18 tinted or clear home screens, Sunote follows your home screen's look automatically.")
                 }
                 Section {
                     Text("A new quote appears every day at midnight. Add the widget from your Home Screen: touch and hold, tap Edit, then Add Widget.")

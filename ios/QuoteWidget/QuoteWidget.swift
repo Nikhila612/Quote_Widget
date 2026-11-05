@@ -140,7 +140,7 @@ struct QuoteWidget: Widget {
         StaticConfiguration(kind: kind, provider: QuoteProvider()) { entry in
             QuoteWidgetView(entry: entry)
         }
-        .configurationDisplayName("Sunnote")
+        .configurationDisplayName("Sunote")
         .description("A fresh, uplifting quote every day.")
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
     }

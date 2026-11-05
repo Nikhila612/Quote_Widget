@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Sunnote</string>
-    <string name="widget_name">Sunnote</string>
+    <string name="app_name">Sunote</string>
+    <string name="widget_name">Sunote</string>
     <string name="widget_description">A fresh, uplifting quote every day.</string>
     <string name="widget_preview_quote">“Every day may not be good, but there is something good in every day.”</string>
     <string name="widget_preview_author">— Unknown</string>

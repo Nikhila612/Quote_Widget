@@ -1,4 +1,4 @@
-// Builds Sunnote's store images from raw simulator/emulator screenshots.
+// Builds Sunote's store images from raw simulator/emulator screenshots.
 // Usage: swift tools/make_store_images.swift <raw-screenshots-dir> <output-dir>
 // Expects in the raw dir: ios-{home,checkin,today,settings,myquotes,favourites}.png,
 // and-{home,checkin,today,settings,myquotes,favourites}.png, and the icon at
@@ -106,7 +106,7 @@ let icon = CGImageSourceCreateImageAtIndex(iconSrc, 0, nil)!
 do {
     let ctx = canvas(1024, 500)
     place(ctx, icon, in: CGRect(x: 90, y: 110, width: 280, height: 280), radius: 62)
-    let title = CTLineCreateWithAttributedString(NSAttributedString(string: "Sunnote", attributes: [
+    let title = CTLineCreateWithAttributedString(NSAttributedString(string: "Sunote", attributes: [
         .font: CTFontCreateWithName("Georgia-Bold" as CFString, 96, nil), .foregroundColor: NSColor(cgColor: ink)!]))
     ctx.textPosition = CGPoint(x: 430, y: 262); CTLineDraw(title, ctx)
     let tag = CTLineCreateWithAttributedString(NSAttributedString(string: "A happy little quote, every day", attributes: [
